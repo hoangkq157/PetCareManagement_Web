@@ -1,0 +1,30 @@
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="logo">🐾</div>
+    <h4>PetCare</h4>
+    <p class="sub">Đăng nhập để tiếp tục</p>
+
+    @if (error()) {
+      <div class="alert-err">{{ error() }}</div>
+    }
+
+    <label>Email</label>
+    <input type="email" placeholder="email@example.com"
+           [value]="email()" (input)="email.set($any($event.target).value)"
+           (keyup.enter)="login()">
+
+    <label>Mật khẩu</label>
+    <input type="password" placeholder="••••••"
+           [value]="matKhau()" (input)="matKhau.set($any($event.target).value)"
+           (keyup.enter)="login()">
+
+    <button class="btn-primary" (click)="login()" [disabled]="loading()">
+      {{ loading() ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+    </button>
+
+    <div class="link-row">
+      Chưa có tài khoản?
+      <a routerLink="/register">Đăng ký ngay</a>
+    </div>
+  </div>
+</div>

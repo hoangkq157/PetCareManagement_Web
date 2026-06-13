@@ -1,0 +1,25 @@
+<nav class="navbar">
+  <a class="brand" routerLink="/">🐾 PetCare</a>
+
+  <div class="nav-links">
+    @if (auth.isNhanVien()) {
+      <a routerLink="/admin/thu-cung"   routerLinkActive="active">Thú cưng</a>
+      <a routerLink="/admin/lich-hen"   routerLinkActive="active">Lịch hẹn</a>
+      <a routerLink="/admin/tiem-phong" routerLinkActive="active">Tiêm phòng</a>
+      <a routerLink="/admin/hoa-don"    routerLinkActive="active">Hoá đơn</a>
+      <a routerLink="/admin/bao-cao"    routerLinkActive="active">Báo cáo</a>
+    }
+    @if (auth.isChuNuoi()) {
+      <a routerLink="/owner/thu-cung"   routerLinkActive="active">Thú cưng của tôi</a>
+      <a routerLink="/owner/dat-lich"   routerLinkActive="active">Đặt lịch</a>
+      <a routerLink="/owner/lich-su"    routerLinkActive="active">Lịch sử</a>
+    }
+  </div>
+
+  <div class="user-info">
+    @if (auth.user()) {
+      <span>👤 {{ auth.user()!.hoTen }}</span>
+      <button (click)="logout()">Đăng xuất</button>
+    }
+  </div>
+</nav>

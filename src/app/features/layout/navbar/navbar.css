@@ -1,0 +1,97 @@
+/* Container chính của Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Phần logo / Tên thương hiệu */
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ff7043; /* Màu cam ấm thân thiện */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand:hover {
+  color: #f4511e;
+}
+
+/* Container chứa các links điều hướng */
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* Các link điều hướng */
+.nav-links a {
+  text-decoration: none;
+  color: #555555;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-links a:hover {
+  color: #ff7043;
+}
+
+/* Trạng thái link đang được chọn (nhờ routerLinkActive="active") */
+.nav-links a.active {
+  color: #ff7043;
+  border-bottom: 2px solid #ff7043;
+}
+
+/* Khu vực thông tin người dùng */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-weight: 500;
+  color: #333333;
+}
+
+/* Nút đăng xuất */
+.user-info button {
+  background-color: #ef5350;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.user-info button:hover {
+  background-color: #d32f2f;
+}
+
+/* Responsive cơ bản cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
