@@ -1,0 +1,62 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">📊 Báo cáo Doanh thu</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><div class="spinner"></div></div>
+  } @else {
+    <div class="stats-grid" style="margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-icon green">💰</div>
+        <div>
+          <div class="stat-value" style="font-size:18px;">{{ fmt(tongDoanhThu()) }}</div>
+          <div class="stat-label">Tổng doanh thu 6 tháng</div>
+        </div>
+      </div>
+      @for (item of chartData(); track item.label) {
+        @if (isCurrentMonth(item)) {
+          <div class="stat-card">
+            <div class="stat-icon blue">📅</div>
+            <div>
+              <div class="stat-value" style="font-size:18px;">{{ fmt(item.value) }}</div>
+              <div class="stat-label">Tháng này ({{ item.label }})</div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:24px;">📈 Biểu đồ doanh thu 6 tháng gần nhất</h3>
+      <div class="chart-area">
+        @for (item of chartData(); track item.label) {
+          <div class="bar-col">
+            <div class="bar-value">{{ fmt(item.value) }}</div>
+            <div class="bar"
+              [class]="isCurrentMonth(item) ? 'bar-current' : ''"
+              [style.height]="barHeight(item.value)"></div>
+            <div class="bar-label" [class]="isCurrentMonth(item) ? 'bar-label-current' : ''">
+              {{ item.label }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Table -->
+      <table class="data-table" style="margin-top:24px;">
+        <thead>
+          <tr><th>Tháng</th><th>Doanh thu</th></tr>
+        </thead>
+        <tbody>
+          @for (item of chartData(); track item.label) {
+            <tr [class]="isCurrentMonth(item) ? 'current-month-row' : ''">
+              <td>{{ item.label }} @if (isCurrentMonth(item)) { <span class="badge badge-success">Tháng hiện tại</span> }</td>
+              <td><strong style="color:#0f6e56;">{{ fmt(item.value) }}</strong></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,85 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">📊 Tổng quan</h1>
+    <span class="text-muted" style="font-size:13px;color:#9a9890;">Cập nhật thời gian thực</span>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><div class="spinner" style="width:32px;height:32px;margin:0 auto;"></div></div>
+  } @else {
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon green">🐾</div>
+        <div>
+          <div class="stat-value">{{ soThuCung() }}</div>
+          <div class="stat-label">Thú cưng</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">👤</div>
+        <div>
+          <div class="stat-value">{{ soChuNuoi() }}</div>
+          <div class="stat-label">Chủ nuôi</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">📅</div>
+        <div>
+          <div class="stat-value">
+            {{ lichHenHomNay() }}
+            @if (lichHenChoDuyet() > 0) {
+              <span class="badge badge-warning" style="font-size:11px;vertical-align:middle;">
+                {{ lichHenChoDuyet() }} chờ
+              </span>
+            }
+          </div>
+          <div class="stat-label">Lịch hẹn hôm nay</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red">💉</div>
+        <div>
+          <div class="stat-value">{{ vaccineSapHan() }}</div>
+          <div class="stat-label">Vaccine sắp đến hạn (30 ngày)</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">💰</div>
+        <div>
+          <div class="stat-value" style="font-size:18px;">{{ formatVND(doanhThuThang()) }}</div>
+          <div class="stat-label">Doanh thu tháng này</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
+      <!-- Biểu đồ doanh thu -->
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:20px;color:#1a1a18;">📈 Doanh thu 6 tháng</h3>
+        <div class="bar-chart">
+          @for (item of chartData(); track item.label) {
+            <div class="bar-col">
+              <div class="bar-value">{{ formatVND(item.value) }}</div>
+              <div class="bar" [style.height]="barHeight(item.value)"></div>
+              <div class="bar-label">{{ item.label }}</div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Truy cập nhanh -->
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:#1a1a18;">⚡ Truy cập nhanh</h3>
+        <div class="quick-links">
+          <a routerLink="/admin/thu-cung/them" class="btn btn-primary">🐾 Thêm thú cưng</a>
+          <a routerLink="/admin/lich-hen/them" class="btn btn-primary">📅 Tạo lịch hẹn</a>
+          <a routerLink="/admin/tiem-phong/them" class="btn btn-primary">💉 Ghi nhận tiêm</a>
+          <a routerLink="/admin/dich-vu" class="btn btn-secondary">✂️ Dịch vụ</a>
+          <a routerLink="/admin/hoa-don" class="btn btn-secondary">🧾 Hoá đơn</a>
+          <a routerLink="/admin/bao-cao" class="btn btn-secondary">📊 Báo cáo</a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

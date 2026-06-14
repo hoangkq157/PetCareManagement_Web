@@ -1,0 +1,41 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">💉 Lịch tiêm phòng</h1>
+  </div>
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (data().length === 0) {
+      <div class="empty-state">
+        <div class="empty-state-icon">💉</div>
+        <p>Chưa có bản ghi tiêm phòng nào.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Thú cưng</th><th>Vaccine</th>
+            <th>Ngày tiêm</th><th>Ngày tiêm tiếp</th><th>Bác sĩ</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tp of data(); track tp.maTP) {
+            <tr>
+              <td><strong>{{ getThuCungTen(tp.maTC) }}</strong></td>
+              <td>{{ tp.tenVaccine }}</td>
+              <td>{{ tp.ngayTiem }}</td>
+              <td>
+                {{ tp.ngayTiemTiep ?? '—' }}
+                @if (isSapHan(tp)) {
+                  <span class="badge badge-warning" style="margin-left:6px;">Sắp đến hạn</span>
+                }
+              </td>
+              <td>{{ tp.bacSiThucHien ?? '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

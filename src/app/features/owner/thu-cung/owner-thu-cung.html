@@ -1,0 +1,74 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">🐾 Thú cưng của tôi</h1>
+    <button class="btn btn-primary" (click)="showForm.set(!showForm())">+ Thêm thú cưng</button>
+  </div>
+
+  @if (msg()) { <div class="alert-ok">{{ msg() }}</div> }
+
+  @if (showForm()) {
+    <div class="card" style="margin-bottom:20px;">
+      <h4 style="font-size:15px;font-weight:700;margin-bottom:16px;">Thêm thú cưng mới</h4>
+      @if (error()) { <div class="alert-err">{{ error() }}</div> }
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Tên <span class="required">*</span></label>
+          <input class="form-input" [value]="tenThuCung()" (input)="tenThuCung.set($any($event.target).value)" placeholder="VD: Bông">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loài</label>
+          <select class="form-input filter-select" [value]="loai()" (change)="loai.set($any($event.target).value)">
+            @for (l of loaiOptions; track l) { <option [value]="l">{{ l }}</option> }
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Giống</label>
+          <input class="form-input" [value]="giong()" (input)="giong.set($any($event.target).value)" placeholder="VD: Poodle">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ngày sinh</label>
+          <input type="date" class="form-input" [value]="ngaySinh()" (change)="ngaySinh.set($any($event.target).value)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cân nặng (kg)</label>
+          <input type="number" class="form-input" step="0.1" [value]="canNang()" (input)="canNang.set($any($event.target).value)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Màu lông</label>
+          <input class="form-input" [value]="mauLong()" (input)="mauLong.set($any($event.target).value)" placeholder="VD: Trắng">
+        </div>
+      </div>
+      <div class="form-actions" style="margin-top:16px;">
+        <button class="btn btn-primary" (click)="them()" [disabled]="saving()">
+          @if (saving()) { <span class="spinner spinner-white"></span> } Thêm
+        </button>
+        <button class="btn btn-secondary" (click)="showForm.set(false)">Huỷ</button>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="empty-state"><div class="spinner"></div></div>
+  } @else if (data().length === 0) {
+    <div class="empty-state">
+      <div class="empty-state-icon">🐾</div>
+      <p>Bạn chưa có thú cưng nào. Hãy thêm mới!</p>
+    </div>
+  } @else {
+    <div class="pet-grid">
+      @for (tc of data(); track tc.maTC) {
+        <div class="pet-card">
+          <div class="pet-avatar">{{ tc.loai === 'Chó' ? '🐶' : tc.loai === 'Mèo' ? '🐱' : '🐾' }}</div>
+          <div class="pet-info">
+            <div class="pet-name">{{ tc.tenThuCung }}</div>
+            <div class="pet-breed">{{ tc.loai }}{{ tc.giong ? ' · ' + tc.giong : '' }}</div>
+            @if (tc.canNang) { <div class="pet-detail">⚖️ {{ tc.canNang }} kg</div> }
+            @if (tc.ngaySinh) { <div class="pet-detail">🎂 {{ tinhTuoi(tc.ngaySinh) }}</div> }
+            @if (tc.mauLong) { <div class="pet-detail">🎨 Lông {{ tc.mauLong }}</div> }
+          </div>
+          <button class="btn btn-sm btn-danger" style="align-self:flex-start;" (click)="xoa(tc.maTC)">🗑️</button>
+        </div>
+      }
+    </div>
+  }
+</div>

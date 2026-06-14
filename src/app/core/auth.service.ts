@@ -21,8 +21,7 @@ export class AuthService {
   // Computed signals – dùng trong templates và guards
   readonly user     = this._user.asReadonly();
   readonly isLoggedIn  = computed(() => this._user() !== null);
-  readonly isNhanVien  = computed(() =>
-    ['NhanVien', 'Admin'].includes(this._user()?.loai ?? ''));
+  readonly isNhanVien  = computed(() => this._user()?.loai === 'NhanVien');
   readonly isChuNuoi   = computed(() => this._user()?.loai === 'ChuNuoi');
   readonly isAdmin     = computed(() => this._user()?.vaiTro === 'Admin');
 

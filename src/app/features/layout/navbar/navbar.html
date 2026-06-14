@@ -1,25 +1,32 @@
 <nav class="navbar">
-  <a class="brand" routerLink="/">🐾 PetCare</a>
+  <a class="brand" [routerLink]="auth.isNhanVien() ? '/admin/dashboard' : '/owner/home'">🐾 PetCare</a>
 
   <div class="nav-links">
     @if (auth.isNhanVien()) {
+      <a routerLink="/admin/dashboard"  routerLinkActive="active">Dashboard</a>
       <a routerLink="/admin/thu-cung"   routerLinkActive="active">Thú cưng</a>
+      <a routerLink="/admin/chu-nuoi"   routerLinkActive="active">Chủ nuôi</a>
       <a routerLink="/admin/lich-hen"   routerLinkActive="active">Lịch hẹn</a>
+      <a routerLink="/admin/dich-vu"    routerLinkActive="active">Dịch vụ</a>
       <a routerLink="/admin/tiem-phong" routerLinkActive="active">Tiêm phòng</a>
       <a routerLink="/admin/hoa-don"    routerLinkActive="active">Hoá đơn</a>
+      <a routerLink="/admin/nhan-vien"  routerLinkActive="active">Nhân viên</a>
       <a routerLink="/admin/bao-cao"    routerLinkActive="active">Báo cáo</a>
     }
     @if (auth.isChuNuoi()) {
-      <a routerLink="/owner/thu-cung"   routerLinkActive="active">Thú cưng của tôi</a>
+      <a routerLink="/owner/home"       routerLinkActive="active">Trang chủ</a>
+      <a routerLink="/owner/thu-cung"   routerLinkActive="active">Thú cưng</a>
       <a routerLink="/owner/dat-lich"   routerLinkActive="active">Đặt lịch</a>
       <a routerLink="/owner/lich-su"    routerLinkActive="active">Lịch sử</a>
+      <a routerLink="/owner/tiem-phong" routerLinkActive="active">Tiêm phòng</a>
+      <a routerLink="/owner/profile"    routerLinkActive="active">Hồ sơ</a>
     }
   </div>
 
   <div class="user-info">
     @if (auth.user()) {
-      <span>👤 {{ auth.user()!.hoTen }}</span>
-      <button (click)="logout()">Đăng xuất</button>
+      <span class="user-name">👤 {{ auth.user()!.hoTen }}</span>
+      <button class="btn-logout" (click)="logout()">Đăng xuất</button>
     }
   </div>
 </nav>

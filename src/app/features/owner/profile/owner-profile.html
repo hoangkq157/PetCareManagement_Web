@@ -1,0 +1,64 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">👤 Hồ sơ cá nhân</h1>
+  </div>
+
+  @if (msg()) {
+    <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'" style="margin-bottom:16px;">{{ msg() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="empty-state"><div class="spinner"></div></div>
+  } @else {
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+      <!-- Thông tin cá nhân -->
+      <div class="form-card" style="flex:1;min-width:280px;">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:20px;">Thông tin cá nhân</h3>
+        @if (error()) { <div class="alert-err">{{ error() }}</div> }
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Họ và tên <span class="required">*</span></label>
+          <input class="form-input" [value]="hoTen()" (input)="hoTen.set($any($event.target).value)">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Email</label>
+          <input class="form-input" [value]="email()" disabled style="background:#f9f8f5;">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Số điện thoại</label>
+          <input class="form-input" [value]="soDienThoai()" (input)="soDienThoai.set($any($event.target).value)" placeholder="09xxxxxxxx">
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Địa chỉ</label>
+          <input class="form-input" [value]="diaChi()" (input)="diaChi.set($any($event.target).value)" placeholder="Số nhà, đường, quận...">
+        </div>
+        <button class="btn btn-primary" (click)="luu()" [disabled]="saving()">
+          @if (saving()) { <span class="spinner spinner-white"></span> } Lưu thay đổi
+        </button>
+      </div>
+
+      <!-- Đổi mật khẩu -->
+      <div class="form-card" style="min-width:280px;">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">Bảo mật</h3>
+        @if (!showPassForm()) {
+          <button class="btn btn-secondary" (click)="showPassForm.set(true)">🔑 Đổi mật khẩu</button>
+        } @else {
+          @if (passError()) { <div class="alert-err">{{ passError() }}</div> }
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label">Mật khẩu mới <span class="required">*</span></label>
+            <input type="password" class="form-input" [value]="matKhauMoi()" (input)="matKhauMoi.set($any($event.target).value)">
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Xác nhận mật khẩu <span class="required">*</span></label>
+            <input type="password" class="form-input" [value]="matKhauXN()" (input)="matKhauXN.set($any($event.target).value)">
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" (click)="doiMatKhau()" [disabled]="passSaving()">
+              @if (passSaving()) { <span class="spinner spinner-white"></span> } Lưu
+            </button>
+            <button class="btn btn-secondary" (click)="showPassForm.set(false)">Huỷ</button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,82 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">
+      💉 Quản lý Tiêm phòng
+      @if (sapHan().length > 0) {
+        <span class="badge badge-danger" style="font-size:12px;vertical-align:middle;margin-left:8px;">
+          {{ sapHan().length }} sắp đến hạn
+        </span>
+      }
+    </h1>
+    <div style="display:flex;gap:8px;">
+      @if (sapHan().length > 0) {
+        <button class="btn btn-warning" (click)="showCanhBao.set(!showCanhBao())">🔔 Cảnh báo</button>
+      }
+      <a routerLink="/admin/tiem-phong/them" class="btn btn-primary">+ Ghi nhận tiêm</a>
+    </div>
+  </div>
+
+  @if (msg()) {
+    <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'">{{ msg() }}</div>
+  }
+
+  <!-- Cảnh báo sắp đến hạn -->
+  @if (showCanhBao() && sapHan().length > 0) {
+    <div class="card" style="margin-bottom:16px;border-left:4px solid #f0ad4e;">
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:12px;color:#856404;">
+        🔔 Vaccine sắp đến hạn trong 30 ngày ({{ sapHan().length }})
+      </h4>
+      @for (tp of sapHan(); track tp.maTP) {
+        <div style="padding:8px 0;border-top:1px solid #f0ede5;font-size:14px;">
+          <strong>{{ getThuCungTen(tp.maTC) }}</strong> — {{ tp.tenVaccine }}
+          <span class="badge badge-warning" style="margin-left:8px;">{{ tp.ngayTiemTiep }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="search-bar" style="margin-bottom:16px;">
+    <input class="search-input" placeholder="Tìm theo vaccine, thú cưng..."
+      [value]="search()" (input)="search.set($any($event.target).value)">
+  </div>
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state"><div class="empty-state-icon">💉</div><p>Chưa có bản ghi tiêm phòng.</p></div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Thú cưng</th><th>Vaccine</th>
+            <th>Ngày tiêm</th><th>Ngày tiêm tiếp</th><th>Bác sĩ</th><th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tp of filtered(); track tp.maTP; let i = $index) {
+            <tr [class]="isSapHan(tp) ? 'row-warning' : ''">
+              <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
+              <td><strong>{{ getThuCungTen(tp.maTC) }}</strong></td>
+              <td>{{ tp.tenVaccine }}</td>
+              <td>{{ tp.ngayTiem }}</td>
+              <td>
+                {{ tp.ngayTiemTiep ?? '—' }}
+                @if (isSapHan(tp)) {
+                  <span class="badge badge-warning" style="margin-left:4px;">Sắp đến hạn</span>
+                }
+              </td>
+              <td>{{ tp.bacSiThucHien ?? '—' }}</td>
+              <td>
+                <div style="display:flex;gap:6px;">
+                  <a [routerLink]="['/admin/tiem-phong', tp.maTP, 'sua']" class="btn btn-sm btn-secondary">✏️ Sửa</a>
+                  <button class="btn btn-sm btn-danger" (click)="xoa(tp.maTP)">🗑️ Xoá</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

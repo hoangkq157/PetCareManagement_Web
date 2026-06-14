@@ -1,0 +1,61 @@
+<div class="owner-home">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Chào mừng, {{ auth.user()?.hoTen ?? 'bạn' }}! 🐾</h1>
+      <p>Quản lý thú cưng và đặt lịch chăm sóc dễ dàng</p>
+      <div class="hero-btns">
+        <a routerLink="/owner/dat-lich" class="btn btn-hero-primary">📅 Đặt lịch ngay</a>
+        <a routerLink="/owner/thu-cung" class="btn btn-hero-secondary">🐾 Thú cưng của tôi</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="owner-stats">
+    <div class="stat-card">
+      <div class="stat-icon green">🐾</div>
+      <div>
+        <div class="stat-value">{{ soThuCung() }}</div>
+        <div class="stat-label">Thú cưng</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">📅</div>
+      <div>
+        <div class="stat-value">{{ lichHenSap() }}</div>
+        <div class="stat-label">Lịch hẹn sắp tới</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick links -->
+  <div class="section-title">Các chức năng</div>
+  <div class="quick-grid">
+    <a routerLink="/owner/thu-cung" class="quick-card">
+      <div class="quick-icon">🐾</div>
+      <div class="quick-label">Thú cưng của tôi</div>
+      <div class="quick-desc">Xem và quản lý danh sách thú cưng</div>
+    </a>
+    <a routerLink="/owner/dat-lich" class="quick-card">
+      <div class="quick-icon">📅</div>
+      <div class="quick-label">Đặt lịch dịch vụ</div>
+      <div class="quick-desc">Đặt lịch tắm, cắt tỉa, khám sức khoẻ...</div>
+    </a>
+    <a routerLink="/owner/lich-su" class="quick-card">
+      <div class="quick-icon">📋</div>
+      <div class="quick-label">Lịch sử đặt lịch</div>
+      <div class="quick-desc">Xem tất cả lịch hẹn đã đặt</div>
+    </a>
+    <a routerLink="/owner/tiem-phong" class="quick-card">
+      <div class="quick-icon">💉</div>
+      <div class="quick-label">Lịch tiêm phòng</div>
+      <div class="quick-desc">Theo dõi lịch sử và lịch tiêm sắp tới</div>
+    </a>
+    <a routerLink="/owner/profile" class="quick-card">
+      <div class="quick-icon">👤</div>
+      <div class="quick-label">Hồ sơ cá nhân</div>
+      <div class="quick-desc">Cập nhật thông tin tài khoản</div>
+    </a>
+  </div>
+</div>

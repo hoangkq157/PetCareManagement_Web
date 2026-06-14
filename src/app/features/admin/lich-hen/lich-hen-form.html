@@ -1,0 +1,64 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">{{ editId() ? '✏️ Sửa lịch hẹn' : '📅 Tạo lịch hẹn' }}</h1>
+    <a routerLink="/admin/lich-hen" class="btn btn-secondary">← Quay lại</a>
+  </div>
+
+  @if (loadingData()) {
+    <div class="empty-state"><div class="spinner"></div></div>
+  } @else {
+    @if (error()) { <div class="alert-err">{{ error() }}</div> }
+
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Thú cưng <span class="required">*</span></label>
+          <select class="form-input filter-select"
+            [value]="maTC()" (change)="maTC.set(+$any($event.target).value)">
+            <option value="0" disabled>-- Chọn thú cưng --</option>
+            @for (tc of thuCungs(); track tc.maTC) {
+              <option [value]="tc.maTC">{{ tc.tenThuCung }} ({{ tc.loai }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Dịch vụ <span class="optional-tag">(tuỳ chọn)</span></label>
+          <select class="form-input filter-select"
+            [value]="maDV()" (change)="maDV.set(+$any($event.target).value)">
+            <option value="0">-- Không chọn dịch vụ --</option>
+            @for (dv of dichVus(); track dv.maDV) {
+              <option [value]="dv.maDV">{{ dv.tenDichVu }} — {{ getDichVuGia(dv, maTC()) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ngày hẹn <span class="required">*</span></label>
+          <input type="date" class="form-input"
+            [value]="ngayHen()" (change)="ngayHen.set($any($event.target).value)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Giờ hẹn <span class="required">*</span></label>
+          <input type="time" class="form-input"
+            [value]="gioHen()" (change)="gioHen.set($any($event.target).value)">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label">Ghi chú <span class="optional-tag">(tuỳ chọn)</span></label>
+          <textarea class="form-input" rows="3"
+            [value]="ghiChu()" (input)="ghiChu.set($any($event.target).value)"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top:20px;">
+        <button class="btn btn-primary" (click)="submit()" [disabled]="loading()">
+          @if (loading()) { <span class="spinner spinner-white"></span> }
+          {{ editId() ? 'Cập nhật' : 'Tạo lịch hẹn' }}
+        </button>
+        <a routerLink="/admin/lich-hen" class="btn btn-secondary">Huỷ</a>
+      </div>
+    </div>
+  }
+</div>

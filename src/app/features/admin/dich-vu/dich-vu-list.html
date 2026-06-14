@@ -1,0 +1,94 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">✂️ Quản lý Dịch vụ</h1>
+    <button class="btn btn-primary" (click)="openCreate()">+ Thêm dịch vụ</button>
+  </div>
+
+  @if (msg()) {
+    <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'">{{ msg() }}</div>
+  }
+
+  <!-- Modal form -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="showForm.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3 class="modal-title">{{ editId() ? 'Sửa dịch vụ' : 'Thêm dịch vụ' }}</h3>
+        @if (formError()) { <div class="alert-err">{{ formError() }}</div> }
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Tên dịch vụ <span class="required">*</span></label>
+            <input class="form-input" [value]="tenDichVu()" (input)="tenDichVu.set($any($event.target).value)" placeholder="VD: Tắm & sấy lông">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Danh mục</label>
+            <select class="form-input filter-select" [value]="danhMuc()" (change)="danhMuc.set($any($event.target).value)">
+              @for (dm of danhMucOptions; track dm) { <option [value]="dm">{{ dm }}</option> }
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giá chó (₫)</label>
+            <input type="number" class="form-input" [value]="giaCho()" (input)="giaCho.set($any($event.target).value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giá mèo (₫)</label>
+            <input type="number" class="form-input" [value]="giaMeo()" (input)="giaMeo.set($any($event.target).value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giá khác (₫)</label>
+            <input type="number" class="form-input" [value]="giaKhac()" (input)="giaKhac.set($any($event.target).value)">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Mô tả</label>
+            <textarea class="form-input" rows="2" [value]="moTa()" (input)="moTa.set($any($event.target).value)"></textarea>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" (click)="showForm.set(false)">Huỷ</button>
+          <button class="btn btn-primary" (click)="save()" [disabled]="saving()">
+            @if (saving()) { <span class="spinner spinner-white"></span> } Lưu
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="search-bar" style="margin-bottom:16px;">
+    <input class="search-input" placeholder="Tìm theo tên, danh mục..."
+      [value]="search()" (input)="search.set($any($event.target).value)">
+  </div>
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state"><div class="empty-state-icon">✂️</div><p>Chưa có dịch vụ nào.</p></div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Tên dịch vụ</th><th>Danh mục</th>
+            <th>Giá chó</th><th>Giá mèo</th><th>Giá khác</th><th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (dv of filtered(); track dv.maDV; let i = $index) {
+            <tr>
+              <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
+              <td><strong>{{ dv.tenDichVu }}</strong></td>
+              <td>{{ dv.danhMuc ?? '—' }}</td>
+              <td>{{ fmt(dv.giaCho) }}</td>
+              <td>{{ fmt(dv.giaMeo) }}</td>
+              <td>{{ fmt(dv.giaKhac) }}</td>
+              <td>
+                <div style="display:flex;gap:6px;">
+                  <button class="btn btn-sm btn-secondary" (click)="openEdit(dv)">✏️ Sửa</button>
+                  <button class="btn btn-sm btn-danger" (click)="xoa(dv.maDV)">🗑️ Xoá</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

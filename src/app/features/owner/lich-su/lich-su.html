@@ -1,0 +1,46 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">📋 Lịch sử đặt lịch</h1>
+  </div>
+
+  @if (msg()) { <div class="alert-ok">{{ msg() }}</div> }
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (data().length === 0) {
+      <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <p>Chưa có lịch hẹn nào.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Thú cưng</th><th>Dịch vụ</th>
+            <th>Ngày hẹn</th><th>Giờ</th><th>Chi phí</th>
+            <th>Trạng thái</th><th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (lh of data(); track lh.maLH; let i = $index) {
+            <tr>
+              <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
+              <td><strong>{{ lh.tenThuCung }}</strong></td>
+              <td>{{ lh.dichVu ?? '—' }}</td>
+              <td>{{ lh.ngayHen }}</td>
+              <td>{{ lh.gioHen }}</td>
+              <td>{{ fmt(lh.donGia) }}</td>
+              <td><span class="badge" [class]="badgeClass(lh.trangThai)">{{ labelTT(lh.trangThai) }}</span></td>
+              <td>
+                @if (lh.trangThai === 'ChoDuyet' || lh.trangThai === 'XacNhan') {
+                  <button class="btn btn-sm btn-danger" (click)="huy(lh.maLH)">✖ Huỷ</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">🐾 Quản lý Thú cưng</h1>
+    <a routerLink="/admin/thu-cung/them" class="btn btn-primary">+ Thêm mới</a>
+  </div>
+
+  @if (msg()) {
+    <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'">{{ msg() }}</div>
+  }
+
+  <div class="search-bar" style="margin-bottom:16px;">
+    <input class="search-input" placeholder="Tìm theo tên, chủ, loài..."
+      [value]="search()" (input)="search.set($any($event.target).value)">
+  </div>
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state">
+        <div class="empty-state-icon">🐾</div>
+        <p>Chưa có thú cưng nào.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tên</th>
+            <th>Loài</th>
+            <th>Giống</th>
+            <th>Cân nặng</th>
+            <th>Chủ nuôi</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tc of filtered(); track tc.maTC; let i = $index) {
+            <tr>
+              <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
+              <td><strong>{{ tc.tenThuCung }}</strong></td>
+              <td>{{ tc.loai }}</td>
+              <td>{{ tc.giong ?? '—' }}</td>
+              <td>{{ tc.canNang ? tc.canNang + ' kg' : '—' }}</td>
+              <td>{{ getChuNuoiTen(tc.maCN) }}</td>
+              <td>
+                <div style="display:flex;gap:6px;">
+                  <a [routerLink]="['/admin/thu-cung', tc.maTC, 'sua']" class="btn btn-sm btn-secondary">✏️ Sửa</a>
+                  <button class="btn btn-sm btn-danger"
+                    [disabled]="deletingId() === tc.maTC"
+                    (click)="xoa(tc.maTC)">
+                    {{ deletingId() === tc.maTC ? '...' : '🗑️ Xoá' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

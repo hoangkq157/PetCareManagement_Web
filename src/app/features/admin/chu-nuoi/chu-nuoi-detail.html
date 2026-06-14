@@ -1,0 +1,107 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">👤 Chi tiết Chủ nuôi</h1>
+    <a routerLink="/admin/chu-nuoi" class="btn btn-secondary">← Quay lại</a>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><div class="spinner"></div></div>
+  } @else if (error()) {
+    <div class="alert-err">{{ error() }}</div>
+  } @else if (chuNuoi()) {
+    <!-- Thông tin chủ nuôi -->
+    <div class="detail-card" style="margin-bottom:24px;">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;color:#1a1a1a;">📋 Thông tin cá nhân</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Họ tên</span>
+          <span class="info-value"><strong>{{ chuNuoi()!.hoTen }}</strong></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ chuNuoi()!.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Số điện thoại</span>
+          <span class="info-value">{{ chuNuoi()!.soDienThoai ?? '—' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Địa chỉ</span>
+          <span class="info-value">{{ chuNuoi()!.diaChi ?? '—' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Ngày đăng ký</span>
+          <span class="info-value">{{ chuNuoi()!.ngayDangKy ?? '—' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Tổng chi tiêu</span>
+          <span class="info-value" style="color:#0f6e56;font-weight:700;">{{ fmt(tongTien()) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thú cưng -->
+    <div class="detail-card" style="margin-bottom:24px;">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;color:#1a1a1a;">
+        🐾 Thú cưng ({{ thuCungs().length }})
+      </h2>
+      @if (thuCungs().length === 0) {
+        <p style="color:#9a9890;text-align:center;padding:20px 0;">Chưa có thú cưng.</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Tên</th><th>Loài</th><th>Giống</th>
+              <th>Tuổi</th><th>Cân nặng</th><th>Màu lông</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tc of thuCungs(); track tc.maTC; let i = $index) {
+              <tr>
+                <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
+                <td><strong>{{ tc.tenThuCung }}</strong></td>
+                <td>{{ tc.loai }}</td>
+                <td>{{ tc.giong ?? '—' }}</td>
+                <td>{{ tinhTuoi(tc.ngaySinh) }}</td>
+                <td>{{ tc.canNang ? tc.canNang + ' kg' : '—' }}</td>
+                <td>{{ tc.mauLong ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+
+    <!-- Hoá đơn -->
+    <div class="detail-card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;color:#1a1a1a;">
+        🧾 Hoá đơn ({{ hoaDons().length }})
+      </h2>
+      @if (hoaDons().length === 0) {
+        <p style="color:#9a9890;text-align:center;padding:20px 0;">Chưa có hoá đơn.</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mã HD</th><th>Ngày lập</th><th>Tổng tiền</th>
+              <th>Trạng thái</th><th>Phương thức</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (hd of hoaDons(); track hd.maHD) {
+              <tr>
+                <td><strong>#{{ hd.maHD }}</strong></td>
+                <td>{{ hd.ngayLap ?? '—' }}</td>
+                <td><strong style="color:#0f6e56;">{{ fmt(hd.tongTien) }}</strong></td>
+                <td>
+                  <span class="badge" [class]="badgeHD(hd.trangThaiTT)">{{ labelHD(hd.trangThaiTT) }}</span>
+                </td>
+                <td>{{ hd.phuongThucTT ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+</div>

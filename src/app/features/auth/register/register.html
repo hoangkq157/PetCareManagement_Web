@@ -1,0 +1,108 @@
+<div class="register-wrap">
+  <div class="register-card">
+    <div class="logo">🐾</div>
+    <h4>PetCare</h4>
+    <p class="sub">Tạo tài khoản chủ nuôi</p>
+
+    @if (error()) {
+      <div class="alert-err">{{ error() }}</div>
+    }
+
+    <!-- Họ tên -->
+    <label for="hoTen">Họ và tên <span class="required">*</span></label>
+    <input
+      id="hoTen"
+      type="text"
+      placeholder="Nguyễn Văn A"
+      [value]="hoTen()"
+      (input)="hoTen.set($any($event.target).value)"
+      [disabled]="loading()"
+      autocomplete="name"
+    >
+
+    <!-- Email -->
+    <label for="email">Email <span class="required">*</span></label>
+    <input
+      id="email"
+      type="email"
+      placeholder="email@example.com"
+      [value]="email()"
+      (input)="email.set($any($event.target).value)"
+      [disabled]="loading()"
+      autocomplete="email"
+    >
+
+    <!-- Mật khẩu -->
+    <label for="matkhau">Mật khẩu <span class="required">*</span></label>
+    <div class="pass-wrap">
+      <input
+        id="matkhau"
+        [type]="showPass() ? 'text' : 'password'"
+        placeholder="Tối thiểu 6 ký tự"
+        [value]="matKhau()"
+        (input)="matKhau.set($any($event.target).value)"
+        [disabled]="loading()"
+        autocomplete="new-password"
+      >
+      <button type="button" class="btn-eye" (click)="toggleShowPass()" tabindex="-1">
+        {{ showPass() ? '🙈' : '👁️' }}
+      </button>
+    </div>
+
+    <!-- Xác nhận mật khẩu -->
+    <label for="xacnhan">Xác nhận mật khẩu <span class="required">*</span></label>
+    <div class="pass-wrap">
+      <input
+        id="xacnhan"
+        [type]="showXacNhan() ? 'text' : 'password'"
+        placeholder="Nhập lại mật khẩu"
+        [value]="xacNhan()"
+        (input)="xacNhan.set($any($event.target).value)"
+        (keyup.enter)="register()"
+        [disabled]="loading()"
+        autocomplete="new-password"
+      >
+      <button type="button" class="btn-eye" (click)="toggleShowXacNhan()" tabindex="-1">
+        {{ showXacNhan() ? '🙈' : '👁️' }}
+      </button>
+    </div>
+
+    <!-- Số điện thoại -->
+    <label for="sdt">Số điện thoại <span class="optional">(tuỳ chọn)</span></label>
+    <input
+      id="sdt"
+      type="tel"
+      placeholder="09xxxxxxxx"
+      [value]="soDienThoai()"
+      (input)="soDienThoai.set($any($event.target).value)"
+      [disabled]="loading()"
+      autocomplete="tel"
+    >
+
+    <!-- Địa chỉ -->
+    <label for="diachi">Địa chỉ <span class="optional">(tuỳ chọn)</span></label>
+    <input
+      id="diachi"
+      type="text"
+      placeholder="Số nhà, đường, quận, thành phố"
+      [value]="diaChi()"
+      (input)="diaChi.set($any($event.target).value)"
+      [disabled]="loading()"
+      autocomplete="street-address"
+    >
+
+    <!-- Nút đăng ký -->
+    <button class="btn-primary" (click)="register()" [disabled]="loading()">
+      @if (loading()) {
+        <span class="spinner"></span> Đang đăng ký...
+      } @else {
+        Đăng ký
+      }
+    </button>
+
+    <div class="link-row">
+      Đã có tài khoản?
+      <a routerLink="/login">Đăng nhập</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">🧾 Quản lý Hoá đơn</h1>
+  </div>
+
+  @if (msg()) {
+    <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'">{{ msg() }}</div>
+  }
+
+  <!-- Modal thanh toán -->
+  @if (showModal() && selectedHD()) {
+    <div class="modal-overlay" (click)="showModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3 class="modal-title">💳 Thanh toán hoá đơn #{{ selectedHD()!.maHD }}</h3>
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;margin-bottom:8px;">
+            <span>Tổng tiền:</span>
+            <span style="color:#0f6e56;">{{ fmt(selectedHD()!.tongTien) }}</span>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Phương thức thanh toán</label>
+          <select class="form-input filter-select" [value]="phuongThuc()" (change)="phuongThuc.set($any($event.target).value)">
+            <option value="TienMat">Tiền mặt</option>
+            <option value="ChuyenKhoan">Chuyển khoản</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Số tiền khách trả (₫)</label>
+          <input type="number" class="form-input" [value]="soTienKhachTra()"
+            (input)="onSoTienChange($any($event.target).value)">
+        </div>
+        @if (tienThua() > 0) {
+          <div style="background:#d4edda;color:#155724;padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:12px;">
+            💵 Tiền thừa trả lại: <strong>{{ fmt(tienThua()) }}</strong>
+          </div>
+        }
+        <div class="modal-actions">
+          <button class="btn btn-secondary" (click)="showModal.set(false)">Huỷ</button>
+          <button class="btn btn-primary" (click)="thanhToan()" [disabled]="paying()">
+            @if (paying()) { <span class="spinner spinner-white"></span> } Xác nhận thanh toán
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="search-bar" style="margin-bottom:16px;">
+    <input class="search-input" placeholder="Tìm theo tên chủ nuôi, mã HD..."
+      [value]="search()" (input)="search.set($any($event.target).value)">
+    <select class="filter-select" [value]="filterTT()" (change)="filterTT.set($any($event.target).value)">
+      <option value="">Tất cả trạng thái</option>
+      <option value="ChuaThanhToan">Chưa thanh toán</option>
+      <option value="DaThanhToan">Đã thanh toán</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state"><div class="empty-state-icon">🧾</div><p>Chưa có hoá đơn nào.</p></div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Mã HD</th><th>Chủ nuôi</th><th>Ngày lập</th>
+            <th>Tổng tiền</th><th>Trạng thái</th><th>Phương thức</th><th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (hd of filtered(); track hd.maHD) {
+            <tr>
+              <td><strong>#{{ hd.maHD }}</strong></td>
+              <td>{{ getChuNuoiTen(hd.maCN) }}</td>
+              <td>{{ hd.ngayLap ?? '—' }}</td>
+              <td><strong style="color:#0f6e56;">{{ fmt(hd.tongTien) }}</strong></td>
+              <td><span class="badge" [class]="badgeClass(hd.trangThaiTT)">{{ labelTT(hd.trangThaiTT) }}</span></td>
+              <td>{{ hd.phuongThucTT ?? '—' }}</td>
+              <td>
+                <div style="display:flex;gap:6px;">
+                  @if (hd.trangThaiTT !== 'DaThanhToan') {
+                    <button class="btn btn-sm btn-primary" (click)="openPayModal(hd)">💳 Thanh toán</button>
+                  }
+                  <button class="btn btn-sm btn-danger" (click)="xoa(hd.maHD)">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

@@ -1,0 +1,135 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">👥 Quản lý Nhân viên</h1>
+    <button class="btn btn-primary" (click)="openCreate()">+ Thêm nhân viên</button>
+  </div>
+
+  @if (msg()) {
+    <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'">{{ msg() }}</div>
+  }
+
+  <!-- Modal form -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="showForm.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3 class="modal-title">{{ editId() ? '✏️ Sửa nhân viên' : '➕ Thêm nhân viên' }}</h3>
+        @if (formError()) { <div class="alert-err" style="margin-bottom:12px;">{{ formError() }}</div> }
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Họ tên <span class="required">*</span></label>
+            <input class="form-input" [value]="hoTen()"
+              (input)="hoTen.set($any($event.target).value)"
+              placeholder="Nguyễn Văn A">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email <span class="required">*</span></label>
+            <input type="email" class="form-input" [value]="email()"
+              (input)="email.set($any($event.target).value)"
+              placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số điện thoại</label>
+            <input type="tel" class="form-input" [value]="soDienThoai()"
+              (input)="soDienThoai.set($any($event.target).value)"
+              placeholder="0901234567">
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              Mật khẩu {{ editId() ? '(bỏ trống nếu không đổi)' : '' }}
+              @if (!editId()) { <span class="required">*</span> }
+            </label>
+            <div style="position:relative;">
+              <input [type]="showPass() ? 'text' : 'password'" class="form-input" [value]="matKhau()"
+                (input)="matKhau.set($any($event.target).value)"
+                placeholder="Tối thiểu 6 ký tự" style="padding-right:44px;">
+              <button type="button"
+                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;"
+                (click)="showPass.set(!showPass())">{{ showPass() ? '🙈' : '👁️' }}</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vai trò</label>
+            <select class="form-input filter-select" [value]="vaiTro()"
+              (change)="vaiTro.set($any($event.target).value)">
+              @for (vt of vaiTroOptions; track vt) {
+                <option [value]="vt">{{ vt }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Trạng thái</label>
+            <select class="form-input filter-select" [value]="trangThai() ? 'true' : 'false'"
+              (change)="trangThai.set($any($event.target).value === 'true')">
+              <option value="true">Hoạt động</option>
+              <option value="false">Ngừng hoạt động</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" (click)="showForm.set(false)">Huỷ</button>
+          <button class="btn btn-primary" (click)="save()" [disabled]="saving()">
+            @if (saving()) { <span class="spinner spinner-white"></span> } Lưu
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="search-bar" style="margin-bottom:16px;">
+    <input class="search-input" placeholder="Tìm theo tên, email, SĐT..."
+      [value]="search()" (input)="search.set($any($event.target).value)">
+  </div>
+
+  <div class="table-wrap">
+    @if (loading()) {
+      <div class="empty-state"><div class="spinner"></div></div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <p>Chưa có nhân viên nào.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Vai trò</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (nv of filtered(); track nv.maNV; let i = $index) {
+            <tr>
+              <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
+              <td><strong>{{ nv.hoTen }}</strong></td>
+              <td>{{ nv.email }}</td>
+              <td>{{ nv.soDienThoai ?? '—' }}</td>
+              <td>
+                <span class="badge" [class]="badgeVaiTro(nv.vaiTro)">{{ nv.vaiTro }}</span>
+              </td>
+              <td>
+                @if (nv.trangThai) {
+                  <span class="badge badge-success">Hoạt động</span>
+                } @else {
+                  <span class="badge badge-secondary">Ngừng HĐ</span>
+                }
+              </td>
+              <td>{{ nv.ngayTao ? nv.ngayTao.toString().slice(0,10) : '—' }}</td>
+              <td>
+                <div style="display:flex;gap:6px;">
+                  <button class="btn btn-sm btn-secondary" (click)="openEdit(nv)">✏️ Sửa</button>
+                  <button class="btn btn-sm btn-danger" (click)="xoa(nv.maNV)">🗑️ Xoá</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

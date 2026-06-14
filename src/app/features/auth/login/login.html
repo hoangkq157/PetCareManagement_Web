@@ -4,22 +4,49 @@
     <h4>PetCare</h4>
     <p class="sub">Đăng nhập để tiếp tục</p>
 
+    <!-- Hiển thị lỗi trả về từ API hoặc validate client -->
     @if (error()) {
       <div class="alert-err">{{ error() }}</div>
     }
 
-    <label>Email</label>
-    <input type="email" placeholder="email@example.com"
-           [value]="email()" (input)="email.set($any($event.target).value)"
-           (keyup.enter)="login()">
+    <!-- Email -->
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      placeholder="email@example.com"
+      [value]="email()"
+      (input)="email.set($any($event.target).value)"
+      (keyup.enter)="login()"
+      [disabled]="loading()"
+      autocomplete="email"
+    >
 
-    <label>Mật khẩu</label>
-    <input type="password" placeholder="••••••"
-           [value]="matKhau()" (input)="matKhau.set($any($event.target).value)"
-           (keyup.enter)="login()">
+    <!-- Mật khẩu + nút toggle hiện/ẩn -->
+    <label for="matkhau">Mật khẩu</label>
+    <div class="pass-wrap">
+      <input
+        id="matkhau"
+        [type]="showPass() ? 'text' : 'password'"
+        placeholder="••••••"
+        [value]="matKhau()"
+        (input)="matKhau.set($any($event.target).value)"
+        (keyup.enter)="login()"
+        [disabled]="loading()"
+        autocomplete="current-password"
+      >
+      <button type="button" class="btn-eye" (click)="toggleShowPass()" tabindex="-1">
+        {{ showPass() ? '🙈' : '👁️' }}
+      </button>
+    </div>
 
+    <!-- Nút đăng nhập — disable khi đang loading để tránh double-submit -->
     <button class="btn-primary" (click)="login()" [disabled]="loading()">
-      {{ loading() ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+      @if (loading()) {
+        <span class="spinner"></span> Đang đăng nhập...
+      } @else {
+        Đăng nhập
+      }
     </button>
 
     <div class="link-row">

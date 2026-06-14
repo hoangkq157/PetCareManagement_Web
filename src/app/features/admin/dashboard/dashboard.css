@@ -1,0 +1,51 @@
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 180px;
+  padding-top: 24px;
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+.bar {
+  width: 100%;
+  background: #0f6e56;
+  border-radius: 6px 6px 0 0;
+  min-height: 4px;
+  transition: height .3s;
+}
+.bar-label {
+  font-size: 11px;
+  color: #9a9890;
+  white-space: nowrap;
+}
+.bar-value {
+  font-size: 10px;
+  color: #0f6e56;
+  font-weight: 600;
+  position: absolute;
+  top: -18px;
+  white-space: nowrap;
+}
+
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.quick-links .btn {
+  justify-content: flex-start;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}

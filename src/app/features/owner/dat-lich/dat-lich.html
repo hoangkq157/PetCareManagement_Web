@@ -1,0 +1,93 @@
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">📅 Đặt lịch dịch vụ</h1>
+  </div>
+
+  @if (success()) {
+    <div class="alert-ok" style="margin-bottom:16px;">{{ success() }}</div>
+  }
+  @if (error()) {
+    <div class="alert-err" style="margin-bottom:16px;">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="empty-state"><div class="spinner"></div></div>
+  } @else if (thuCungs().length === 0) {
+    <div class="empty-state">
+      <div class="empty-state-icon">🐾</div>
+      <p>Bạn chưa có thú cưng nào.</p>
+      <a routerLink="/owner/thu-cung" class="btn btn-primary" style="margin-top:12px;">Thêm thú cưng</a>
+    </div>
+  } @else {
+    <div class="dat-lich-layout">
+      <!-- Form -->
+      <div class="form-card" style="flex:1;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Thú cưng <span class="required">*</span></label>
+            <select class="form-input filter-select" [value]="maTC()" (change)="maTC.set(+$any($event.target).value)">
+              <option value="0" disabled>-- Chọn thú cưng --</option>
+              @for (tc of thuCungs(); track tc.maTC) {
+                <option [value]="tc.maTC">{{ tc.tenThuCung }} ({{ tc.loai }})</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Dịch vụ <span class="optional-tag">(tuỳ chọn)</span></label>
+            <select class="form-input filter-select" [value]="maDV()" (change)="maDV.set(+$any($event.target).value)">
+              <option value="0">-- Chọn dịch vụ --</option>
+              @for (dv of dichVus(); track dv.maDV) {
+                <option [value]="dv.maDV">{{ dv.tenDichVu }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ngày hẹn <span class="required">*</span></label>
+            <input type="date" class="form-input" [min]="today()"
+              [value]="ngayHen()" (change)="ngayHen.set($any($event.target).value)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Giờ hẹn <span class="required">*</span></label>
+            <input type="time" class="form-input"
+              [value]="gioHen()" (change)="gioHen.set($any($event.target).value)">
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label">Ghi chú <span class="optional-tag">(tuỳ chọn)</span></label>
+            <textarea class="form-input" rows="3" placeholder="Ghi chú thêm cho nhân viên..."
+              [value]="ghiChu()" (input)="ghiChu.set($any($event.target).value)"></textarea>
+          </div>
+        </div>
+
+        <!-- Chi phí dự kiến -->
+        @if (selectedDV() && selectedTC()) {
+          <div class="price-preview">
+            <span>💰 Chi phí dự kiến:</span>
+            <strong style="color:#0f6e56;font-size:16px;">{{ fmt(giaHienTai()) }}</strong>
+          </div>
+        }
+
+        <button class="btn btn-primary" style="margin-top:16px;width:100%;" (click)="datLich()" [disabled]="saving()">
+          @if (saving()) { <span class="spinner spinner-white"></span> }
+          Xác nhận đặt lịch
+        </button>
+      </div>
+
+      <!-- Danh sách dịch vụ -->
+      <div class="dv-sidebar">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">Bảng giá dịch vụ</h3>
+        @for (dv of dichVus(); track dv.maDV) {
+          <div class="dv-item" [class]="maDV() === dv.maDV ? 'dv-item-active' : ''" (click)="maDV.set(dv.maDV)">
+            <div class="dv-name">{{ dv.tenDichVu }}</div>
+            <div class="dv-price">
+              🐶 {{ fmt(dv.giaCho) }} / 🐱 {{ fmt(dv.giaMeo) }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

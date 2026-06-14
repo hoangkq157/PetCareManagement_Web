@@ -1,0 +1,36 @@
+.chart-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 240px;
+  padding-top: 32px;
+  border-bottom: 2px solid #e0ddd4;
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.bar {
+  width: 100%;
+  background: #b2d8cc;
+  border-radius: 6px 6px 0 0;
+  min-height: 4px;
+  transition: height .3s;
+}
+.bar-current { background: #0f6e56; }
+.bar-value {
+  font-size: 11px;
+  color: #0f6e56;
+  font-weight: 600;
+  position: absolute;
+  top: -20px;
+  text-align: center;
+  white-space: nowrap;
+}
+.bar-label { font-size: 12px; color: #9a9890; }
+.bar-label-current { color: #0f6e56; font-weight: 700; }
+.current-month-row td { background: #f0faf6; }
