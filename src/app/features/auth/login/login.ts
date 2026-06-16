@@ -72,6 +72,10 @@ export class LoginComponent {
       }
     });
   }
+// ── Đăng nhập với Google OAuth ───────────────────────────────────
+  loginWithGoogle(): void {
+  this.auth.loginWithGoogle();
+}
 
   // ── Toggle hiện / ẩn mật khẩu ───────────────────────────────────
   toggleShowPass(): void {

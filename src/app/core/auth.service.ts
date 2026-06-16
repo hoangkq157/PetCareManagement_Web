@@ -44,6 +44,26 @@ export class AuthService {
       .pipe(tap(u => this.save(u)));
   }
 
+  // Chuyển hướng sang Google qua backend
+  loginWithGoogle(): void {
+    window.location.href = 'http://localhost:5000/api/auth/google-login'
+  }
+
+  // Gọi sau khi Google redirect về Angular
+  handleGoogleCallback(
+    token: string, hoTen: string,
+    id: string, loai: string, vaiTro: string
+  ): void {
+    const user: UserInfo = {
+      token,
+      loai:   loai as 'NhanVien' | 'ChuNuoi',
+      id:     parseInt(id),
+      hoTen,
+      vaiTro
+    };
+    (this as any).save(user);
+  }
+
   logout(): void {
     localStorage.removeItem('pc_user');
     this._user.set(null);
