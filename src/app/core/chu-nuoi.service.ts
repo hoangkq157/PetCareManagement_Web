@@ -13,5 +13,8 @@ export class ChuNuoiService {
   getById(id: number): Observable<ChuNuoi>                  { return this.http.get<ChuNuoi>(`${this.api}/${id}`); }
   create(item: Partial<ChuNuoi>): Observable<ChuNuoi>       { return this.http.post<ChuNuoi>(this.api, item); }
   update(id: number, item: Partial<ChuNuoi>): Observable<void> { return this.http.put<void>(`${this.api}/${id}`, item); }
+  doiMatKhau(id: number, matKhauCu: string, matKhauMoi: string): Observable<void> {
+    return this.http.patch<void>(`${this.api}/${id}/doi-mat-khau`, { matKhauCu, matKhauMoi });
+  }
   delete(id: number): Observable<void>                      { return this.http.delete<void>(`${this.api}/${id}`); }
 }

@@ -1,61 +1,184 @@
 <div class="owner-home">
-  <!-- Hero -->
-  <div class="hero">
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-deco deco-1">🐾</div>
+    <div class="hero-deco deco-2">🐾</div>
+    <div class="hero-deco deco-3">🦴</div>
     <div class="hero-content">
-      <h1>Chào mừng, {{ auth.user()?.hoTen ?? 'bạn' }}! 🐾</h1>
-      <p>Quản lý thú cưng và đặt lịch chăm sóc dễ dàng</p>
+      <span class="hero-greeting">{{ loiChao() }} 👋</span>
+      <h1>{{ auth.user()?.hoTen ?? 'Bạn' }}</h1>
+      <p>Chăm sóc thú cưng của bạn chưa bao giờ dễ dàng đến thế. Đặt lịch, theo dõi tiêm phòng và quản lý tất cả tại một nơi.</p>
       <div class="hero-btns">
         <a routerLink="/owner/dat-lich" class="btn btn-hero-primary">📅 Đặt lịch ngay</a>
         <a routerLink="/owner/thu-cung" class="btn btn-hero-secondary">🐾 Thú cưng của tôi</a>
       </div>
     </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="owner-stats">
-    <div class="stat-card">
-      <div class="stat-icon green">🐾</div>
-      <div>
-        <div class="stat-value">{{ soThuCung() }}</div>
-        <div class="stat-label">Thú cưng</div>
+    <div class="hero-img-wrap">
+      <img src="assets/images/Bs1.jpg" alt="Bác sĩ thú y" class="hero-img">
+      <div class="hero-img-badge">
+        <span class="badge-icon">💚</span>
+        <div>
+          <div class="badge-title">Tận tâm</div>
+          <div class="badge-sub">Đội ngũ bác sĩ chuyên nghiệp</div>
+        </div>
       </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-icon blue">📅</div>
-      <div>
-        <div class="stat-value">{{ lichHenSap() }}</div>
-        <div class="stat-label">Lịch hẹn sắp tới</div>
+  </section>
+
+  <!-- ── Stats ── -->
+  <section class="stats-row">
+    <div class="stat-tile tile-green">
+      <div class="tile-icon">🐾</div>
+      <div class="tile-info">
+        <div class="tile-value">{{ soThuCung() }}</div>
+        <div class="tile-label">Thú cưng</div>
       </div>
     </div>
-  </div>
+    <div class="stat-tile tile-blue">
+      <div class="tile-icon">📅</div>
+      <div class="tile-info">
+        <div class="tile-value">{{ lichHenSap() }}</div>
+        <div class="tile-label">Lịch hẹn sắp tới</div>
+      </div>
+    </div>
+    <div class="stat-tile tile-amber">
+      <div class="tile-icon">✅</div>
+      <div class="tile-info">
+        <div class="tile-value">{{ soHoanThanh() }}</div>
+        <div class="tile-label">Lượt đã hoàn thành</div>
+      </div>
+    </div>
+  </section>
 
-  <!-- Quick links -->
+  <!-- ── Main grid: Lịch hẹn + Thú cưng ── -->
+  <section class="main-grid">
+
+    <!-- Lịch hẹn sắp tới -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">📅 Lịch hẹn sắp tới</h2>
+        <a routerLink="/owner/lich-su" class="panel-link">Xem tất cả →</a>
+      </div>
+
+      @if (loading()) {
+        <div class="panel-empty"><div class="spinner"></div></div>
+      } @else if (lichHenToi().length === 0) {
+        <div class="panel-empty">
+          <div class="empty-emoji">🗓️</div>
+          <p>Chưa có lịch hẹn nào sắp tới</p>
+          <a routerLink="/owner/dat-lich" class="btn btn-primary btn-sm">+ Đặt lịch ngay</a>
+        </div>
+      } @else {
+        <div class="appt-list">
+          @for (lh of lichHenToi(); track lh.maLH) {
+            <div class="appt-item">
+              <div class="appt-date">
+                <span class="appt-day">{{ lh.ngayHen | date:'dd' }}</span>
+                <span class="appt-month">Th{{ lh.ngayHen | date:'MM' }}</span>
+              </div>
+              <div class="appt-body">
+                <div class="appt-pet">{{ lh.tenThuCung }}</div>
+                <div class="appt-time">🕐 {{ lh.gioHen }} · {{ lh.ngayHen | date:'dd/MM/yyyy' }}</div>
+              </div>
+              <span class="badge" [class]="badgeClass(lh.trangThai)">{{ labelTT(lh.trangThai) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Thú cưng của tôi -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">🐾 Thú cưng của tôi</h2>
+        <a routerLink="/owner/thu-cung" class="panel-link">Quản lý →</a>
+      </div>
+
+      @if (loading()) {
+        <div class="panel-empty"><div class="spinner"></div></div>
+      } @else if (thuCungs().length === 0) {
+        <div class="panel-empty">
+          <div class="empty-emoji">🐶</div>
+          <p>Bạn chưa thêm thú cưng nào</p>
+          <a routerLink="/owner/thu-cung" class="btn btn-primary btn-sm">+ Thêm thú cưng</a>
+        </div>
+      } @else {
+        <div class="pet-list">
+          @for (tc of thuCungs(); track tc.maTC) {
+            <div class="pet-chip">
+              <div class="pet-avatar">{{ petEmoji(tc.loai) }}</div>
+              <div class="pet-meta">
+                <div class="pet-name">{{ tc.tenThuCung }}</div>
+                <div class="pet-sub">{{ tc.loai }}{{ tc.giong ? ' · ' + tc.giong : '' }} · {{ tinhTuoi(tc.ngaySinh) }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </section>
+
+  <!-- ── Quick actions ── -->
   <div class="section-title">Các chức năng</div>
-  <div class="quick-grid">
-    <a routerLink="/owner/thu-cung" class="quick-card">
+  <section class="quick-grid">
+    <a routerLink="/owner/thu-cung" class="quick-card qc-green">
       <div class="quick-icon">🐾</div>
       <div class="quick-label">Thú cưng của tôi</div>
       <div class="quick-desc">Xem và quản lý danh sách thú cưng</div>
     </a>
-    <a routerLink="/owner/dat-lich" class="quick-card">
+    <a routerLink="/owner/dat-lich" class="quick-card qc-blue">
       <div class="quick-icon">📅</div>
       <div class="quick-label">Đặt lịch dịch vụ</div>
       <div class="quick-desc">Đặt lịch tắm, cắt tỉa, khám sức khoẻ...</div>
     </a>
-    <a routerLink="/owner/lich-su" class="quick-card">
+    <a routerLink="/owner/lich-su" class="quick-card qc-purple">
       <div class="quick-icon">📋</div>
       <div class="quick-label">Lịch sử đặt lịch</div>
       <div class="quick-desc">Xem tất cả lịch hẹn đã đặt</div>
     </a>
-    <a routerLink="/owner/tiem-phong" class="quick-card">
+    <a routerLink="/owner/tiem-phong" class="quick-card qc-pink">
       <div class="quick-icon">💉</div>
       <div class="quick-label">Lịch tiêm phòng</div>
       <div class="quick-desc">Theo dõi lịch sử và lịch tiêm sắp tới</div>
     </a>
-    <a routerLink="/owner/profile" class="quick-card">
+    <a routerLink="/owner/profile" class="quick-card qc-amber">
       <div class="quick-icon">👤</div>
       <div class="quick-label">Hồ sơ cá nhân</div>
       <div class="quick-desc">Cập nhật thông tin tài khoản</div>
     </a>
-  </div>
+  </section>
+
+  <!-- ── Gallery ── -->
+  <div class="section-title">Khách hàng đáng yêu của PetCare 🐶🐱</div>
+  <section class="gallery-section">
+    <div class="gallery-grid">
+      <div class="gallery-item tall">
+        <img src="assets/images/petDog1.jpg" alt="Chó cưng">
+        <div class="gallery-overlay">Người bạn trung thành</div>
+      </div>
+      <div class="gallery-col">
+        <div class="gallery-item">
+          <img src="assets/images/petCat.jpg" alt="Mèo cưng">
+          <div class="gallery-overlay">Mèo tinh nghịch</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/petDog2.jpg" alt="Chó cưng 2">
+          <div class="gallery-overlay">Vui vẻ mỗi ngày</div>
+        </div>
+      </div>
+      <div class="gallery-col">
+        <div class="gallery-item">
+          <img src="assets/images/petDog4.jpg" alt="Chó cưng 3">
+          <div class="gallery-overlay">Chăm sóc tận tâm</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/petDog5.jpg" alt="Chó cưng 4">
+          <div class="gallery-overlay">Khỏe mạnh & hạnh phúc</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>

@@ -63,19 +63,25 @@ export class OwnerProfileComponent implements OnInit {
   }
 
   doiMatKhau(): void {
+    if (!this.matKhauCu().trim()) { this.passError.set('Vui lòng nhập mật khẩu cũ.'); return; }
     if (!this.matKhauMoi().trim()) { this.passError.set('Vui lòng nhập mật khẩu mới.'); return; }
-    if (this.matKhauMoi() !== this.matKhauXN()) { this.passError.set('Mật khẩu xác nhận không khớp.'); return; }
     if (this.matKhauMoi().length < 6) { this.passError.set('Mật khẩu mới phải ít nhất 6 ký tự.'); return; }
+    if (this.matKhauMoi() !== this.matKhauXN()) { this.passError.set('Mật khẩu xác nhận không khớp.'); return; }
+    if (this.matKhauMoi() === this.matKhauCu()) { this.passError.set('Mật khẩu mới phải khác mật khẩu cũ.'); return; }
     const id = this.auth.user()?.id;
     if (!id) return;
     this.passSaving.set(true); this.passError.set('');
-    this.cnSvc.update(id, { matKhau: this.matKhauMoi() }).subscribe({
+    this.cnSvc.doiMatKhau(id, this.matKhauCu(), this.matKhauMoi()).subscribe({
       next: () => {
         this.passSaving.set(false); this.showPassForm.set(false);
         this.matKhauCu.set(''); this.matKhauMoi.set(''); this.matKhauXN.set('');
         this.showMsg('Đổi mật khẩu thành công!', 'ok');
       },
-      error: () => { this.passSaving.set(false); this.passError.set('Đổi mật khẩu thất bại.'); }
+      error: (err) => {
+        this.passSaving.set(false);
+        const msg = err?.error?.message ?? 'Đổi mật khẩu thất bại.';
+        this.passError.set(msg);
+      }
     });
   }
 
