@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -7,6 +7,11 @@ import { ChuNuoiService }   from '../../../core/chu-nuoi.service';
 import { LichHenService }   from '../../../core/lich-hen.service';
 import { TiemPhongService } from '../../../core/tiem-phong.service';
 import { HoaDonService }    from '../../../core/hoa-don.service';
+import { LichHen } from '../../../core/models';
+
+interface LichHenView extends LichHen {
+  tenThuCung: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -30,9 +35,23 @@ export class DashboardComponent implements OnInit {
   vaccineSapHan  = signal(0);
   doanhThuThang  = signal(0);
 
+  choDuyetList   = signal<LichHenView[]>([]);
+
   // Doanh thu 6 tháng gần nhất
   chartData      = signal<{ label: string; value: number }[]>([]);
   maxValue       = signal(1);
+
+  loiChao = computed(() => {
+    const h = new Date().getHours();
+    if (h < 11) return 'Chào buổi sáng';
+    if (h < 14) return 'Chào buổi trưa';
+    if (h < 18) return 'Chào buổi chiều';
+    return 'Chào buổi tối';
+  });
+
+  ngayHomNay = computed(() =>
+    new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  );
 
   ngOnInit(): void {
     const today = new Date().toISOString().split('T')[0];
@@ -52,6 +71,15 @@ export class DashboardComponent implements OnInit {
         this.lichHenHomNay.set(homNay.length);
         this.lichHenChoDuyet.set(res.lichHen.filter(l => l.trangThai === 'ChoDuyet').length);
         this.vaccineSapHan.set(res.vaccine.length);
+
+        // Lịch hẹn chờ duyệt (preview top 5)
+        const tcMap = new Map(res.thuCung.map(t => [t.maTC, t.tenThuCung]));
+        const choDuyet = res.lichHen
+          .filter(l => l.trangThai === 'ChoDuyet')
+          .sort((a, b) => (a.ngayHen + a.gioHen).localeCompare(b.ngayHen + b.gioHen))
+          .slice(0, 5)
+          .map(l => ({ ...l, tenThuCung: tcMap.get(l.maTC) ?? `TC#${l.maTC}` }));
+        this.choDuyetList.set(choDuyet);
 
         // Doanh thu tháng hiện tại
         const thangNay = new Date().getMonth() + 1;
@@ -94,7 +122,13 @@ export class DashboardComponent implements OnInit {
     return n.toLocaleString('vi-VN') + ' ₫';
   }
 
+  formatVNDShort(n: number): string {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'tr';
+    if (n >= 1_000) return Math.round(n / 1_000) + 'k';
+    return n.toString();
+  }
+
   barHeight(v: number): string {
-    return Math.round((v / this.maxValue()) * 160) + 'px';
+    return Math.max(Math.round((v / this.maxValue()) * 160), 4) + 'px';
   }
 }

@@ -1,67 +1,77 @@
-<div class="page-wrap">
-  <div class="page-header">
-    <h1 class="page-title">📊 Tổng quan</h1>
-    <span class="text-muted" style="font-size:13px;color:#9a9890;">Cập nhật thời gian thực</span>
-  </div>
+<div class="dashboard">
+
+  <!-- ── Hero header ── -->
+  <section class="dash-hero">
+    <div class="dash-hero-deco">📊</div>
+    <div class="dash-hero-content">
+      <span class="dash-greeting">{{ loiChao() }} 👋</span>
+      <h1>Bảng điều khiển</h1>
+      <p class="dash-date">{{ ngayHomNay() }}</p>
+    </div>
+    <div class="dash-hero-revenue">
+      <span class="rev-label">💰 Doanh thu tháng này</span>
+      <span class="rev-value">{{ formatVND(doanhThuThang()) }}</span>
+    </div>
+  </section>
 
   @if (loading()) {
     <div class="empty-state"><div class="spinner" style="width:32px;height:32px;margin:0 auto;"></div></div>
   } @else {
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon green">🐾</div>
-        <div>
-          <div class="stat-value">{{ soThuCung() }}</div>
-          <div class="stat-label">Thú cưng</div>
+
+    <!-- ── Stat tiles ── -->
+    <section class="stats-row">
+      <a routerLink="/admin/thu-cung" class="stat-tile tile-green">
+        <div class="tile-icon">🐾</div>
+        <div class="tile-info">
+          <div class="tile-value">{{ soThuCung() }}</div>
+          <div class="tile-label">Thú cưng</div>
         </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon blue">👤</div>
-        <div>
-          <div class="stat-value">{{ soChuNuoi() }}</div>
-          <div class="stat-label">Chủ nuôi</div>
+      </a>
+      <a routerLink="/admin/chu-nuoi" class="stat-tile tile-blue">
+        <div class="tile-icon">👤</div>
+        <div class="tile-info">
+          <div class="tile-value">{{ soChuNuoi() }}</div>
+          <div class="tile-label">Chủ nuôi</div>
         </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon yellow">📅</div>
-        <div>
-          <div class="stat-value">
+      </a>
+      <a routerLink="/admin/lich-hen" class="stat-tile tile-amber">
+        <div class="tile-icon">📅</div>
+        <div class="tile-info">
+          <div class="tile-value">
             {{ lichHenHomNay() }}
             @if (lichHenChoDuyet() > 0) {
-              <span class="badge badge-warning" style="font-size:11px;vertical-align:middle;">
-                {{ lichHenChoDuyet() }} chờ
-              </span>
+              <span class="tile-pill">{{ lichHenChoDuyet() }} chờ</span>
             }
           </div>
-          <div class="stat-label">Lịch hẹn hôm nay</div>
+          <div class="tile-label">Lịch hẹn hôm nay</div>
         </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon red">💉</div>
-        <div>
-          <div class="stat-value">{{ vaccineSapHan() }}</div>
-          <div class="stat-label">Vaccine sắp đến hạn (30 ngày)</div>
+      </a>
+      <a routerLink="/admin/tiem-phong" class="stat-tile tile-rose">
+        <div class="tile-icon">💉</div>
+        <div class="tile-info">
+          <div class="tile-value">{{ vaccineSapHan() }}</div>
+          <div class="tile-label">Vaccine sắp đến hạn</div>
         </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon purple">💰</div>
-        <div>
-          <div class="stat-value" style="font-size:18px;">{{ formatVND(doanhThuThang()) }}</div>
-          <div class="stat-label">Doanh thu tháng này</div>
-        </div>
-      </div>
-    </div>
+      </a>
+    </section>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
+    <!-- ── Main grid ── -->
+    <section class="main-grid">
+
       <!-- Biểu đồ doanh thu -->
-      <div class="card">
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:20px;color:#1a1a18;">📈 Doanh thu 6 tháng</h3>
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">📈 Doanh thu 6 tháng gần nhất</h2>
+          <a routerLink="/admin/bao-cao" class="panel-link">Báo cáo →</a>
+        </div>
         <div class="bar-chart">
           @for (item of chartData(); track item.label) {
             <div class="bar-col">
-              <div class="bar-value">{{ formatVND(item.value) }}</div>
-              <div class="bar" [style.height]="barHeight(item.value)"></div>
+              <div class="bar-wrap">
+                <div class="bar-tooltip">{{ formatVND(item.value) }}</div>
+                <div class="bar" [style.height]="barHeight(item.value)"></div>
+              </div>
+              <div class="bar-cap">{{ formatVNDShort(item.value) }}</div>
               <div class="bar-label">{{ item.label }}</div>
             </div>
           }
@@ -69,17 +79,69 @@
       </div>
 
       <!-- Truy cập nhanh -->
-      <div class="card">
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:#1a1a18;">⚡ Truy cập nhanh</h3>
-        <div class="quick-links">
-          <a routerLink="/admin/thu-cung/them" class="btn btn-primary">🐾 Thêm thú cưng</a>
-          <a routerLink="/admin/lich-hen/them" class="btn btn-primary">📅 Tạo lịch hẹn</a>
-          <a routerLink="/admin/tiem-phong/them" class="btn btn-primary">💉 Ghi nhận tiêm</a>
-          <a routerLink="/admin/dich-vu" class="btn btn-secondary">✂️ Dịch vụ</a>
-          <a routerLink="/admin/hoa-don" class="btn btn-secondary">🧾 Hoá đơn</a>
-          <a routerLink="/admin/bao-cao" class="btn btn-secondary">📊 Báo cáo</a>
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">⚡ Truy cập nhanh</h2>
+        </div>
+        <div class="qa-grid">
+          <a routerLink="/admin/thu-cung/them" class="qa-card qc-green">
+            <span class="qa-icon">🐾</span><span class="qa-text">Thêm thú cưng</span>
+          </a>
+          <a routerLink="/admin/lich-hen/them" class="qa-card qc-blue">
+            <span class="qa-icon">📅</span><span class="qa-text">Tạo lịch hẹn</span>
+          </a>
+          <a routerLink="/admin/tiem-phong/them" class="qa-card qc-rose">
+            <span class="qa-icon">💉</span><span class="qa-text">Ghi nhận tiêm</span>
+          </a>
+          <a routerLink="/admin/dich-vu" class="qa-card qc-purple">
+            <span class="qa-icon">✂️</span><span class="qa-text">Dịch vụ</span>
+          </a>
+          <a routerLink="/admin/hoa-don" class="qa-card qc-amber">
+            <span class="qa-icon">🧾</span><span class="qa-text">Hoá đơn</span>
+          </a>
+          <a routerLink="/admin/bao-cao" class="qa-card qc-teal">
+            <span class="qa-icon">📊</span><span class="qa-text">Báo cáo</span>
+          </a>
         </div>
       </div>
-    </div>
+
+    </section>
+
+    <!-- ── Lịch hẹn chờ duyệt ── -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">
+          🔔 Lịch hẹn chờ duyệt
+          @if (lichHenChoDuyet() > 0) {
+            <span class="badge badge-warning" style="margin-left:6px;">{{ lichHenChoDuyet() }}</span>
+          }
+        </h2>
+        <a routerLink="/admin/lich-hen" class="panel-link">Quản lý tất cả →</a>
+      </div>
+
+      @if (choDuyetList().length === 0) {
+        <div class="panel-empty">
+          <div class="empty-emoji">✅</div>
+          <p>Không có lịch hẹn nào đang chờ duyệt</p>
+        </div>
+      } @else {
+        <div class="approve-list">
+          @for (lh of choDuyetList(); track lh.maLH) {
+            <a [routerLink]="['/admin/lich-hen']" class="approve-item">
+              <div class="appt-date">
+                <span class="appt-day">{{ lh.ngayHen | date:'dd' }}</span>
+                <span class="appt-month">Th{{ lh.ngayHen | date:'MM' }}</span>
+              </div>
+              <div class="approve-body">
+                <div class="approve-pet">{{ lh.tenThuCung }}</div>
+                <div class="approve-time">🕐 {{ lh.gioHen }} · {{ lh.ngayHen | date:'dd/MM/yyyy' }}</div>
+              </div>
+              <span class="badge badge-warning">Chờ duyệt</span>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
   }
 </div>
