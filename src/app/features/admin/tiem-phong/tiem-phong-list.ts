@@ -25,6 +25,10 @@ export class TiemPhongListComponent implements OnInit {
   msg         = signal('');
   msgType     = signal<'ok'|'err'>('ok');
 
+  sapTiem = computed(() => this.data().filter(t => this.isNgayTiemSapDen(t)));
+
+  totalCanhBao = computed(() => this.sapHan().length + this.sapTiem().length);
+
   filtered = computed(() => {
     const q = this.search().toLowerCase();
     return this.data().filter(t =>
@@ -61,8 +65,17 @@ export class TiemPhongListComponent implements OnInit {
 
   isSapHan(tp: TiemPhong): boolean {
     if (!tp.ngayTiemTiep) return false;
-    const diff = new Date(tp.ngayTiemTiep).getTime() - Date.now();
-    return diff >= 0 && diff <= 30 * 24 * 60 * 60 * 1000;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const next  = new Date(tp.ngayTiemTiep); next.setHours(0, 0, 0, 0);
+    const diff  = next.getTime() - today.getTime();
+    return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
+  }
+
+  isNgayTiemSapDen(tp: TiemPhong): boolean {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const ngay  = new Date(tp.ngayTiem); ngay.setHours(0, 0, 0, 0);
+    const diff  = ngay.getTime() - today.getTime();
+    return diff > 0 && diff <= 7 * 24 * 60 * 60 * 1000;
   }
 
   private showMsg(m: string, t: 'ok'|'err'): void {

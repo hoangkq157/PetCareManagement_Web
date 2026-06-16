@@ -2,14 +2,14 @@
   <div class="page-header">
     <h1 class="page-title">
       💉 Quản lý Tiêm phòng
-      @if (sapHan().length > 0) {
+      @if (totalCanhBao() > 0) {
         <span class="badge badge-danger" style="font-size:12px;vertical-align:middle;margin-left:8px;">
-          {{ sapHan().length }} sắp đến hạn
+          {{ totalCanhBao() }} cần chú ý
         </span>
       }
     </h1>
     <div style="display:flex;gap:8px;">
-      @if (sapHan().length > 0) {
+      @if (totalCanhBao() > 0) {
         <button class="btn btn-warning" (click)="showCanhBao.set(!showCanhBao())">🔔 Cảnh báo</button>
       }
       <a routerLink="/admin/tiem-phong/them" class="btn btn-primary">+ Ghi nhận tiêm</a>
@@ -20,18 +20,36 @@
     <div [class]="msgType() === 'ok' ? 'alert-ok' : 'alert-err'">{{ msg() }}</div>
   }
 
-  <!-- Cảnh báo sắp đến hạn -->
-  @if (showCanhBao() && sapHan().length > 0) {
+  <!-- Bảng cảnh báo -->
+  @if (showCanhBao() && totalCanhBao() > 0) {
     <div class="card" style="margin-bottom:16px;border-left:4px solid #f0ad4e;">
-      <h4 style="font-size:14px;font-weight:700;margin-bottom:12px;color:#856404;">
-        🔔 Vaccine sắp đến hạn trong 30 ngày ({{ sapHan().length }})
-      </h4>
-      @for (tp of sapHan(); track tp.maTP) {
-        <div style="padding:8px 0;border-top:1px solid #f0ede5;font-size:14px;">
-          <strong>{{ getThuCungTen(tp.maTC) }}</strong> — {{ tp.tenVaccine }}
-          <span class="badge badge-warning" style="margin-left:8px;">{{ tp.ngayTiemTiep }}</span>
-        </div>
+
+      <!-- Sắp đến ngày tiêm (trong 7 ngày) -->
+      @if (sapTiem().length > 0) {
+        <h4 style="font-size:14px;font-weight:700;margin:12px 0 8px;color:#0f5132;">
+          📅 Ngày tiêm sắp tới trong 7 ngày ({{ sapTiem().length }})
+        </h4>
+        @for (tp of sapTiem(); track tp.maTP) {
+          <div style="padding:8px 0;border-top:1px solid #badbcc;font-size:14px;">
+            <strong>{{ getThuCungTen(tp.maTC) }}</strong> — {{ tp.tenVaccine }}
+            <span class="badge badge-success" style="margin-left:8px;">Ngày tiêm: {{ tp.ngayTiem }}</span>
+          </div>
+        }
       }
+
+      <!-- Sắp đến hạn tiêm tiếp (trong 7 ngày) -->
+      @if (sapHan().length > 0) {
+        <h4 style="font-size:14px;font-weight:700;margin:12px 0 8px;color:#856404;">
+          🔔 Sắp đến hạn tiêm tiếp trong 7 ngày ({{ sapHan().length }})
+        </h4>
+        @for (tp of sapHan(); track tp.maTP) {
+          <div style="padding:8px 0;border-top:1px solid #f0ede5;font-size:14px;">
+            <strong>{{ getThuCungTen(tp.maTC) }}</strong> — {{ tp.tenVaccine }}
+            <span class="badge badge-warning" style="margin-left:8px;">Ngày tiêm tiếp: {{ tp.ngayTiemTiep }}</span>
+          </div>
+        }
+      }
+
     </div>
   }
 
@@ -55,11 +73,16 @@
         </thead>
         <tbody>
           @for (tp of filtered(); track tp.maTP; let i = $index) {
-            <tr [class]="isSapHan(tp) ? 'row-warning' : ''">
+            <tr [class]="(isSapHan(tp) || isNgayTiemSapDen(tp)) ? 'row-warning' : ''">
               <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
               <td><strong>{{ getThuCungTen(tp.maTC) }}</strong></td>
               <td>{{ tp.tenVaccine }}</td>
-              <td>{{ tp.ngayTiem }}</td>
+              <td>
+                {{ tp.ngayTiem }}
+                @if (isNgayTiemSapDen(tp)) {
+                  <span class="badge badge-success" style="margin-left:4px;">Sắp tiêm</span>
+                }
+              </td>
               <td>
                 {{ tp.ngayTiemTiep ?? '—' }}
                 @if (isSapHan(tp)) {

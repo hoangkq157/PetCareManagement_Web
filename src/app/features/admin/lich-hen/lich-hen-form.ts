@@ -1,12 +1,13 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { LichHenService }      from '../../../core/lich-hen.service';
 import { LichHenDichVuService } from '../../../core/lich-hen-dich-vu.service';
 import { ThuCungService }      from '../../../core/thu-cung.service';
+import { ChuNuoiService }      from '../../../core/chu-nuoi.service';
 import { DichVuService }       from '../../../core/dich-vu.service';
-import { ThuCung, DichVu } from '../../../core/models';
+import { ThuCung, ChuNuoi, DichVu } from '../../../core/models';
 
 @Component({
   selector: 'app-lich-hen-form',
@@ -19,32 +20,52 @@ export class LichHenFormComponent implements OnInit {
   private svc      = inject(LichHenService);
   private lhdvSvc  = inject(LichHenDichVuService);
   private tcSvc    = inject(ThuCungService);
+  private cnSvc    = inject(ChuNuoiService);
   private dvSvc    = inject(DichVuService);
   private router   = inject(Router);
   private route    = inject(ActivatedRoute);
 
-  editId    = signal<number | null>(null);
-  loading   = signal(false);
+  editId      = signal<number | null>(null);
+  loading     = signal(false);
   loadingData = signal(true);
-  error     = signal('');
+  error       = signal('');
+
+  chuNuois  = signal<ChuNuoi[]>([]);
   thuCungs  = signal<ThuCung[]>([]);
   dichVus   = signal<DichVu[]>([]);
 
+  maCN    = signal(0);
   maTC    = signal(0);
   maDV    = signal(0);
   ngayHen = signal('');
   gioHen  = signal('08:00');
   ghiChu  = signal('');
 
+  thuCungsFiltered = computed(() =>
+    this.maCN() ? this.thuCungs().filter(tc => tc.maCN === this.maCN()) : []
+  );
+
+  onChuNuoiChange(maCN: number): void {
+    this.maCN.set(maCN);
+    this.maTC.set(0);
+  }
+
   ngOnInit(): void {
-    forkJoin({ tc: this.tcSvc.getAll(), dv: this.dvSvc.getAll() }).subscribe(res => {
+    forkJoin({
+      tc: this.tcSvc.getAll(),
+      cn: this.cnSvc.getAll(),
+      dv: this.dvSvc.getAll()
+    }).subscribe(res => {
       this.thuCungs.set(res.tc);
+      this.chuNuois.set(res.cn);
       this.dichVus.set(res.dv);
 
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
         this.editId.set(+id);
         forkJoin({ lh: this.svc.getById(+id), lhdv: this.lhdvSvc.getByLichHen(+id) }).subscribe(r => {
+          const pet = res.tc.find(t => t.maTC === r.lh.maTC);
+          if (pet) this.maCN.set(pet.maCN);
           this.maTC.set(r.lh.maTC);
           this.ngayHen.set(r.lh.ngayHen);
           this.gioHen.set(r.lh.gioHen);

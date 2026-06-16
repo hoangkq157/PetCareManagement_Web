@@ -35,6 +35,8 @@
           <tr>
             <th>#</th>
             <th>Thú cưng</th>
+            <th>Chủ nuôi</th>
+            <th>Dịch vụ</th>
             <th>Ngày hẹn</th>
             <th>Giờ</th>
             <th>Trạng thái</th>
@@ -47,6 +49,8 @@
             <tr>
               <td style="color:#9a9890;font-size:12px;">{{ i + 1 }}</td>
               <td><strong>{{ getThuCungTen(lh.maTC) }}</strong></td>
+              <td>{{ getChuNuoiTen(lh.maTC) }}</td>
+              <td>{{ getDichVuTen(lh.maLH) }}</td>
               <td>{{ lh.ngayHen }}</td>
               <td>{{ lh.gioHen }}</td>
               <td><span class="badge" [class]="badgeClass(lh.trangThai)">{{ labelTT(lh.trangThai) }}</span></td>

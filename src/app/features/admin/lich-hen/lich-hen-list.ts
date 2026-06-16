@@ -1,11 +1,14 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { LichHenService } from '../../../core/lich-hen.service';
 import { ThuCungService } from '../../../core/thu-cung.service';
+import { ChuNuoiService } from '../../../core/chu-nuoi.service';
+import { DichVuService }  from '../../../core/dich-vu.service';
 import { LichHenDichVuService } from '../../../core/lich-hen-dich-vu.service';
 import { HoaDonService } from '../../../core/hoa-don.service';
-import { LichHen, ThuCung, LichHenDichVu, HoaDon } from '../../../core/models';
+import { LichHen, ThuCung, ChuNuoi, DichVu, LichHenDichVu, HoaDon } from '../../../core/models';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -19,12 +22,17 @@ import { of } from 'rxjs';
 export class LichHenListComponent implements OnInit {
   private svc     = inject(LichHenService);
   private tcSvc   = inject(ThuCungService);
+  private cnSvc   = inject(ChuNuoiService);
+  private dvSvc   = inject(DichVuService);
   private lhdvSvc = inject(LichHenDichVuService);
   private hdSvc   = inject(HoaDonService);
 
   loading    = signal(true);
   data       = signal<LichHen[]>([]);
   thuCungs   = signal<ThuCung[]>([]);
+  chuNuois   = signal<ChuNuoi[]>([]);
+  dichVus    = signal<DichVu[]>([]);
+  lhdvs      = signal<LichHenDichVu[]>([]);
   hoaDons    = signal<HoaDon[]>([]);
   search     = signal('');
   filterTT   = signal('');
@@ -41,14 +49,26 @@ export class LichHenListComponent implements OnInit {
     return this.data().filter(l =>
       (!tt || l.trangThai === tt) &&
       (!q  || this.getThuCungTen(l.maTC).toLowerCase().includes(q) ||
+              this.getChuNuoiTen(l.maTC).toLowerCase().includes(q) ||
               l.ngayHen.includes(q))
     );
   });
 
   ngOnInit(): void {
+    forkJoin({
+      thuCungs: this.tcSvc.getAll(),
+      chuNuois: this.cnSvc.getAll(),
+      dichVus:  this.dvSvc.getAll(),
+      lhdvs:    this.lhdvSvc.getAll(),
+      hoaDons:  this.hdSvc.getAll()
+    }).subscribe(({ thuCungs, chuNuois, dichVus, lhdvs, hoaDons }) => {
+      this.thuCungs.set(thuCungs);
+      this.chuNuois.set(chuNuois);
+      this.dichVus.set(dichVus);
+      this.lhdvs.set(lhdvs);
+      this.hoaDons.set(hoaDons);
+    });
     this.load();
-    this.tcSvc.getAll().subscribe(tc => this.thuCungs.set(tc));
-    this.hdSvc.getAll().subscribe(hd => this.hoaDons.set(hd));
   }
 
   load(): void {
@@ -65,6 +85,22 @@ export class LichHenListComponent implements OnInit {
 
   getThuCungTen(maTC: number): string {
     return this.thuCungs().find(t => t.maTC === maTC)?.tenThuCung ?? `TC#${maTC}`;
+  }
+
+  getChuNuoiTen(maTC: number): string {
+    const tc = this.thuCungs().find(t => t.maTC === maTC);
+    if (!tc) return '—';
+    return this.chuNuois().find(cn => cn.maCN === tc.maCN)?.hoTen ?? '—';
+  }
+
+  getDichVuTen(maLH: number): string {
+    const maDVList = this.lhdvs()
+      .filter(lh => lh.maLH === maLH)
+      .map(lh => lh.maDV);
+    if (!maDVList.length) return '—';
+    return maDVList
+      .map(id => this.dichVus().find(d => d.maDV === id)?.tenDichVu ?? `DV#${id}`)
+      .join(', ');
   }
 
   doiTrangThai(id: number, tt: string): void {
@@ -93,7 +129,6 @@ export class LichHenListComponent implements OnInit {
       return;
     }
     this.creatingHD.set(lh.maLH);
-    // Lấy danh sách dịch vụ của lịch hẹn để tính tổng tiền
     this.lhdvSvc.getByLichHen(lh.maLH).pipe(
       switchMap((items: LichHenDichVu[]) => {
         const tongTien = items.reduce((s, i) => s + i.soLuong * i.donGia, 0);

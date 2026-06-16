@@ -9,6 +9,7 @@ export class LichHenDichVuService {
   private http = inject(HttpClient);
   private api  = `${environment.apiUrl}/lichHenDichVu`;
 
+  getAll(): Observable<LichHenDichVu[]>                               { return this.http.get<LichHenDichVu[]>(this.api); }
   getByLichHen(maLH: number): Observable<LichHenDichVu[]>             { return this.http.get<LichHenDichVu[]>(`${this.api}/bylichHen/${maLH}`); }
   create(item: Partial<LichHenDichVu>): Observable<LichHenDichVu>     { return this.http.post<LichHenDichVu>(this.api, item); }
   delete(id: number): Observable<void>                                 { return this.http.delete<void>(`${this.api}/${id}`); }

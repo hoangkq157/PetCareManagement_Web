@@ -11,15 +11,37 @@
 
     <div class="form-card">
       <div class="form-grid">
+
+        <!-- Bước 1: Chọn chủ nuôi -->
+        <div class="form-group">
+          <label class="form-label">Chủ nuôi <span class="required">*</span></label>
+          <select class="form-input filter-select"
+            [value]="maCN()"
+            (change)="onChuNuoiChange(+$any($event.target).value)">
+            <option value="0" disabled>-- Chọn chủ nuôi --</option>
+            @for (cn of chuNuois(); track cn.maCN) {
+              <option [value]="cn.maCN">{{ cn.hoTen }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Bước 2: Chọn thú cưng (lọc theo chủ nuôi) -->
         <div class="form-group">
           <label class="form-label">Thú cưng <span class="required">*</span></label>
           <select class="form-input filter-select"
-            [value]="maTC()" (change)="maTC.set(+$any($event.target).value)">
-            <option value="0" disabled>-- Chọn thú cưng --</option>
-            @for (tc of thuCungs(); track tc.maTC) {
+            [value]="maTC()"
+            [disabled]="!maCN()"
+            (change)="maTC.set(+$any($event.target).value)">
+            <option value="0" disabled>
+              {{ maCN() ? '-- Chọn thú cưng --' : '-- Chọn chủ nuôi trước --' }}
+            </option>
+            @for (tc of thuCungsFiltered(); track tc.maTC) {
               <option [value]="tc.maTC">{{ tc.tenThuCung }} ({{ tc.loai }})</option>
             }
           </select>
+          @if (maCN() && thuCungsFiltered().length === 0) {
+            <small style="color:#9a9890;font-size:12px;">Chủ nuôi này chưa có thú cưng.</small>
+          }
         </div>
 
         <div class="form-group">
