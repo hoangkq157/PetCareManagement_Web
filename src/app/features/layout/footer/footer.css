@@ -1,0 +1,104 @@
+.site-footer {
+  background: linear-gradient(135deg, #0c4035 0%, #103f33 60%, #14352c 100%);
+  color: #cdd8d3;
+  margin-top: 32px;
+}
+.footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 44px 24px 24px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.3fr 1.3fr;
+  gap: 36px;
+}
+
+.footer-col { min-width: 0; }
+
+/* Brand */
+.footer-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffc94d;
+  margin-bottom: 14px;
+}
+.footer-desc {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #9fb0a9;
+}
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+.social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-decoration: none;
+  transition: background .2s, transform .15s;
+}
+.social-btn:hover { background: rgba(255,201,77,.2); transform: translateY(-2px); }
+
+/* Titles */
+.footer-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+/* Quick links */
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-links a {
+  color: #9fb0a9;
+  text-decoration: none;
+  font-size: 13.5px;
+  transition: color .2s, padding-left .2s;
+}
+.footer-links a:hover { color: #ffc94d; padding-left: 4px; }
+
+/* Contact */
+.footer-contact { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-contact li { font-size: 13.5px; color: #9fb0a9; display: flex; align-items: flex-start; gap: 8px; }
+.ct-icon { flex-shrink: 0; }
+
+/* Hours */
+.footer-hours { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-hours li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: #9fb0a9;
+}
+.footer-hours li.closed { color: #f08a8a; font-weight: 700; }
+
+/* Divider + copyright */
+.footer-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,.12);
+  margin: 32px 0 18px;
+}
+.footer-copy {
+  text-align: center;
+  font-size: 12.5px;
+  color: #8a9b94;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+}
+@media (max-width: 520px) {
+  .footer-grid { grid-template-columns: 1fr; gap: 26px; }
+  .footer-inner { padding: 32px 20px 20px; }
+}
