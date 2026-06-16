@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { RouterOutlet }    from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar';
 import { FooterComponent } from '../footer/footer';
+import { ChatbotWidgetComponent } from '../../owner/chatbot/chatbot-widget';
 
 @Component({
   selector: 'app-owner-layout',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, ChatbotWidgetComponent],
   template: `
     <app-navbar />
     <div class="layout-shell">
@@ -15,6 +16,7 @@ import { FooterComponent } from '../footer/footer';
       </main>
       <app-footer />
     </div>
+    <app-chatbot-widget />
   `,
   styles: [`
     .layout-shell { display: flex; flex-direction: column; min-height: calc(100vh - 60px); }

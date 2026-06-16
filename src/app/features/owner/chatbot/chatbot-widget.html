@@ -1,0 +1,29 @@
+@if (!open()) {
+  <button class="chat-fab" (click)="toggle()" title="Trợ lý PetCare">💬</button>
+}
+
+@if (open()) {
+  <div class="chat-panel">
+    <div class="chat-header">
+      <span>🐾 Trợ lý PetCare</span>
+      <button class="chat-close" (click)="toggle()">✕</button>
+    </div>
+
+    <div class="chat-body" #chatBody>
+      @for (m of messages(); track $index) {
+        <div class="msg" [class.msg-user]="m.role === 'user'" [class.msg-bot]="m.role === 'assistant'">
+          {{ m.content }}
+        </div>
+      }
+      @if (loading()) {
+        <div class="msg msg-bot typing">Đang trả lời…</div>
+      }
+    </div>
+
+    <form class="chat-input" (ngSubmit)="send()">
+      <input [ngModel]="input()" (ngModelChange)="input.set($event)" name="msg"
+             placeholder="Nhập câu hỏi…" autocomplete="off" />
+      <button type="submit" [disabled]="loading()">Gửi</button>
+    </form>
+  </div>
+}
