@@ -116,4 +116,13 @@ export class HoaDonListComponent implements OnInit {
     this.msg.set(m); this.msgType.set(t);
     setTimeout(() => this.msg.set(''), 3000);
   }
+  qrUrl = computed(() => {
+  const hd = this.selectedHD();
+  if (!hd) return '';
+  const bankBin   = '970418'; // BIDV
+  const accountNo = '8870786560';
+  const amount    = hd.tongTien;
+  const addInfo   = encodeURIComponent(`HD${hd.maHD}`);
+  return `https://img.vietqr.io/image/${bankBin}-${accountNo}-compact2.png?amount=${amount}&addInfo=${addInfo}&accountName=PETCARE%20MANAGEMENT`;
+});
 }
