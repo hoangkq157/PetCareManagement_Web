@@ -58,5 +58,12 @@ export const routes: Routes = [
       import('./features/owner/owner.routes').then(m => m.ownerRoutes)
   },
 
+  // ── Google OAuth callback ─────────────────────────────────────────────
+    {
+    path: 'auth/google/callback',
+    loadComponent: () =>
+      import('./features/auth/google-callback/google-callback')
+        .then(m => m.GoogleCallbackComponent)
+  },
   { path: '**', redirectTo: 'login' }
 ];

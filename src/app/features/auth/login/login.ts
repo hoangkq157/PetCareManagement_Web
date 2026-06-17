@@ -12,7 +12,7 @@ import { Router, ActivatedRoute }  from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   // ── Dependency Injection (Angular 21 style) ──────────────────────
   // inject() thay cho constructor — gọn hơn, không cần khai báo params
   private auth   = inject(AuthService);
@@ -80,6 +80,11 @@ export class LoginComponent {
     }
   });
   }
+
+  // ── Đăng nhập với Google OAuth ───────────────────────────────────
+  loginWithGoogle(): void {
+  this.auth.loginWithGoogle();
+}
 
   // ── Toggle hiện / ẩn mật khẩu ───────────────────────────────────
   toggleShowPass(): void {
