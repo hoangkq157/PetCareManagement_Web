@@ -1,0 +1,48 @@
+<div class="otp-wrap">
+  <div class="otp-card">
+    <div class="logo">📧</div>
+    <h4>Nhập mã OTP</h4>
+    <p class="sub">Kiểm tra hộp thư email của bạn</p>
+
+    <div class="step-indicator">
+      <span class="done">✓</span> Nhập email
+      <span class="active">2</span> Xác minh OTP
+      <span>3</span> Mật khẩu mới
+    </div>
+
+    @if (error()) {
+      <div class="alert-err">{{ error() }}</div>
+    }
+
+    <p class="countdown" [class.expired]="secondsLeft() <= 0">
+      {{ countdownText }}
+    </p>
+
+    <input
+      id="otp"
+      type="text"
+      class="otp-input"
+      maxlength="6"
+      placeholder="······"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      [value]="otp()"
+      (input)="onOtpInput($any($event.target).value)"
+      (keyup.enter)="xacMinh()"
+      [disabled]="loading()"
+      autofocus
+    >
+
+    <button class="btn-primary" (click)="xacMinh()" [disabled]="loading()">
+      @if (loading()) {
+        <span class="spinner"></span> Đang xác minh...
+      } @else {
+        Xác minh OTP
+      }
+    </button>
+
+    <div class="link-row">
+      <a routerLink="/quenmatkhau">↺ Gửi lại mã / dùng email khác</a>
+    </div>
+  </div>
+</div>

@@ -19,6 +19,24 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/register/register').then(m => m.RegisterComponent)
   },
+  {
+    path: 'quenmatkhau',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./features/auth/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'xacminhotp',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./features/auth/verify-otp/verify-otp').then(m => m.VerifyOtpComponent)
+  },
+  {
+    path: 'datlaimatkhau',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./features/auth/reset-password/reset-password').then(m => m.ResetPasswordComponent)
+  },
 
   // ── Admin (NhanVien/Admin) ───────────────────────────────────────────
   {

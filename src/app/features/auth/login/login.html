@@ -8,7 +8,10 @@
     @if (error()) {
       <div class="alert-err">{{ error() }}</div>
     }
-
+    @if (success()) {
+      <div class="alert-success">{{ success() }}</div>
+    }
+    
     <!-- Email -->
     <label for="email">Email</label>
     <input
@@ -52,6 +55,9 @@
     <div class="link-row">
       Chưa có tài khoản?
       <a routerLink="/register">Đăng ký ngay</a>
+    </div>
+    <div class="link-row" style="margin-top: 0">
+      <a routerLink="/quenmatkhau">Quên mật khẩu?</a>
     </div>
   </div>
 </div>

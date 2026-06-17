@@ -43,6 +43,33 @@ export class AuthService {
       .post<UserInfo>(`${this.api}/auth/register`, payload)
       .pipe(tap(u => this.save(u)));
   }
+  
+  quenMatKhau(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.api}/auth/quenmatkhau`,
+      { email }
+    );
+  }
+
+  
+  xacMinhOtp(email: string, otp: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.api}/auth/xacminhotp`,
+      { email, otp }
+    );
+  }
+
+ 
+  datLaiMatKhau(
+    email: string,
+    matKhauMoi: string,
+    xacNhanMatKhau: string
+  ): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.api}/auth/datlaimatkhau`,
+      { email, matKhauMoi, xacNhanMatKhau }
+    );
+  }
 
   logout(): void {
     localStorage.removeItem('pc_user');

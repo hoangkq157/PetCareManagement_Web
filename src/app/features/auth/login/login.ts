@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule }  from '@angular/forms';
 import { RouterLink }   from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService }  from '../../../core/auth.service';
-import { Router }       from '@angular/router';
+import { Router, ActivatedRoute }  from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +17,7 @@ export class LoginComponent {
   // inject() thay cho constructor — gọn hơn, không cần khai báo params
   private auth   = inject(AuthService);
   private router = inject(Router);
+  private route  = inject(ActivatedRoute);
 
   // ── State signals ────────────────────────────────────────────────
   // signal() là reactive state của Angular — khi set() thì template tự re-render
@@ -25,7 +26,7 @@ export class LoginComponent {
   loading     = signal(false);   // true khi đang chờ API trả về
   error       = signal('');      // chuỗi lỗi hiển thị dưới form
   showPass    = signal(false);   // toggle hiện/ẩn mật khẩu
-
+  success     = signal('');      // thông báo thành công
   // ── Hàm chính: gọi API đăng nhập ─────────────────────────────────
   login(): void {
     // 1. Validate phía client trước khi gọi API
@@ -71,6 +72,13 @@ export class LoginComponent {
         }
       }
     });
+  }
+  ngOnInit(): void {
+  this.route.queryParams.subscribe(params => {
+    if (params['resetSuccess'] === '1') {
+      this.success.set('Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập.');
+    }
+  });
   }
 
   // ── Toggle hiện / ẩn mật khẩu ───────────────────────────────────
